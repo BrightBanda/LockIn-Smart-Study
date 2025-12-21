@@ -4,6 +4,7 @@ import 'package:smart_study/src/data/model/Subject.dart';
 import 'package:smart_study/src/presentation/viewmodel/SubjectViewModel.dart';
 import 'package:smart_study/src/utils/SubjectCard.dart';
 import 'package:smart_study/src/utils/addSubjectDialog.dart';
+import 'package:smart_study/src/utils/dayofWeekButton.dart';
 
 class Homepage extends ConsumerWidget {
   const Homepage({super.key});
@@ -66,20 +67,46 @@ class Homepage extends ConsumerWidget {
           ],
         ),
       ),
-      body: ListView.builder(
-        itemCount: subjects.length,
-        itemBuilder: (context, index) {
-          final subject = subjects[index];
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Subjectcard(
-              subjectId: subject.id,
-              subjectName: subject.name,
-              hours: subject.time,
-              subject: subject,
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 60,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    SizedBox(width: 6),
+                    Dayofweekbutton(day: "Mon"),
+                    Dayofweekbutton(day: "Tue"),
+                    Dayofweekbutton(day: "Wed"),
+                    Dayofweekbutton(day: "Thu"),
+                    Dayofweekbutton(day: "Fri"),
+                    Dayofweekbutton(day: "Sat"),
+                    Dayofweekbutton(day: "Sun"),
+                  ],
+                ),
+              ),
             ),
-          );
-        },
+            Expanded(
+              child: ListView.builder(
+                itemCount: subjects.length,
+                itemBuilder: (context, index) {
+                  final subject = subjects[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Subjectcard(
+                      subjectId: subject.id,
+                      subjectName: subject.name,
+                      hours: subject.time,
+                      subject: subject,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {

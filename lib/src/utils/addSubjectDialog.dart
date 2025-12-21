@@ -4,6 +4,7 @@ import 'package:smart_study/src/data/model/Subject.dart';
 class Addsubjectdialog extends StatelessWidget {
   String name = '';
   String hoursStr = '';
+  String minutesStr = '';
   Addsubjectdialog({super.key});
 
   @override
@@ -19,12 +20,28 @@ class Addsubjectdialog extends StatelessWidget {
               name = value;
             },
           ),
-          TextField(
-            decoration: InputDecoration(labelText: 'Time'),
-            keyboardType: TextInputType.number,
-            onChanged: (value) {
-              hoursStr = value;
-            },
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  decoration: const InputDecoration(labelText: 'Hours'),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    hoursStr = value;
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextField(
+                  decoration: const InputDecoration(labelText: 'Minutes'),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    minutesStr = value;
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -37,11 +54,15 @@ class Addsubjectdialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            final time = int.tryParse(hoursStr) ?? 0;
+            final hours = int.tryParse(hoursStr) ?? 0;
+            final minutes = int.tryParse(minutesStr) ?? 0;
+
+            final safeMinutes = minutes.clamp(0, 59);
+            final totalTime = (hours * 60) + safeMinutes;
             final subject = Subject(
               id: DateTime.now().toString(),
               name: name,
-              time: time,
+              time: totalTime,
               isCompleted: false,
             );
             Navigator.of(context).pop(subject);
