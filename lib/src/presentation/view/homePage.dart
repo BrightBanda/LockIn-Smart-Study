@@ -36,22 +36,29 @@ class Homepage extends ConsumerWidget {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.home),
+              leading: Icon(Icons.home_outlined),
               title: Text('Home'),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Timer'),
+              leading: Icon(Icons.table_chart_outlined),
+              title: Text('TimeTable'),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              leading: Icon(Icons.settings),
+              leading: Icon(Icons.settings_outlined),
               title: Text('Settings'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.message_outlined),
+              title: Text('About'),
               onTap: () {
                 Navigator.pop(context);
               },

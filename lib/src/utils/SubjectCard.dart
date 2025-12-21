@@ -31,50 +31,48 @@ class Subjectcard extends ConsumerWidget {
         color: isRunning ? Colors.green[100] : Colors.white,
         shadowColor: Colors.black54,
         elevation: 10,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.book, size: 20, color: Colors.greenAccent),
-              SizedBox(height: 2),
-              Text(
-                subjectName,
-                style: TextStyle(color: Colors.black, fontSize: 18),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.book, size: 20, color: Colors.greenAccent),
+            SizedBox(height: 2),
+            Text(
+              subjectName,
+              style: TextStyle(color: Colors.black, fontSize: 18),
+            ),
+            Text(
+              'Time: $hours',
+              style: TextStyle(color: Colors.black, fontSize: 16),
+            ),
+            SizedBox(height: 2),
+            Text(
+              _formatTime(remainingTime),
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              Text(
-                'Hours: $hours',
-                style: TextStyle(color: Colors.black, fontSize: 16),
+            ),
+            SizedBox(height: 2),
+            Container(
+              height: 40,
+              width: 75,
+              decoration: BoxDecoration(
+                color: Colors.amberAccent[100],
+                borderRadius: BorderRadius.circular(8),
               ),
-              SizedBox(height: 2),
-              Text(
-                _formatTime(remainingTime),
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: MaterialButton(
+                onPressed: () {
+                  if (isRunning) {
+                    studySessionNotifier.stopSession(subjectId);
+                  } else {
+                    studySessionNotifier.startSession(subject);
+                  }
+                },
+                child: Text(isRunning ? 'Stop' : 'Start'),
               ),
-              SizedBox(height: 2),
-              Container(
-                height: 40,
-                width: 75,
-                decoration: BoxDecoration(
-                  color: Colors.amberAccent[100],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: MaterialButton(
-                  onPressed: () {
-                    if (isRunning) {
-                      studySessionNotifier.stopSession(subjectId);
-                    } else {
-                      studySessionNotifier.startSession(subject);
-                    }
-                  },
-                  child: Text(isRunning ? 'Stop' : 'Start'),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

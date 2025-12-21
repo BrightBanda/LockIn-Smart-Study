@@ -20,7 +20,7 @@ class Addsubjectdialog extends StatelessWidget {
             },
           ),
           TextField(
-            decoration: InputDecoration(labelText: 'Hours'),
+            decoration: InputDecoration(labelText: 'Time'),
             keyboardType: TextInputType.number,
             onChanged: (value) {
               hoursStr = value;
@@ -33,9 +33,9 @@ class Addsubjectdialog extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('Cancel'),
+          child: Text('CANCEL'),
         ),
-        ElevatedButton(
+        TextButton(
           onPressed: () {
             final time = int.tryParse(hoursStr) ?? 0;
             final subject = Subject(
@@ -46,7 +46,7 @@ class Addsubjectdialog extends StatelessWidget {
             );
             Navigator.of(context).pop(subject);
           },
-          child: Text('Add'),
+          child: Text('ADD'),
         ),
       ],
     );
