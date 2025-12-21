@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_study/src/data/model/Subject.dart';
 import 'package:smart_study/src/presentation/viewmodel/studySessionViewmodel.dart';
+import 'package:smart_study/src/utils/myButton.dart';
 
 class Subjectcard extends ConsumerWidget {
   final String subjectName;
@@ -26,53 +27,86 @@ class Subjectcard extends ConsumerWidget {
     final remainingTime = session?.remainingSeconds ?? subject.time * 60;
     final isRunning = session?.isRunning ?? false;
     return Container(
-      height: 800,
+      height: 300,
+      padding: EdgeInsets.all(8.0),
       child: Card(
-        color: isRunning ? Colors.green[100] : Colors.white,
+        color: isRunning ? Colors.yellow[100] : Colors.white,
         shadowColor: Colors.black54,
         elevation: 10,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.book, size: 20, color: Colors.greenAccent),
-            SizedBox(height: 2),
-            Text(
-              subjectName,
-              style: TextStyle(color: Colors.black, fontSize: 18),
-            ),
-            Text(
-              'Time: $hours',
-              style: TextStyle(color: Colors.black, fontSize: 16),
-            ),
-            SizedBox(height: 2),
-            Text(
-              _formatTime(remainingTime),
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              //icon,subject and name row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.book, size: 30, color: Colors.greenAccent),
+
+                  Text(
+                    subjectName,
+                    style: TextStyle(color: Colors.black, fontSize: 18),
+                  ),
+                  SizedBox(width: 20),
+                  //timer display
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                    child: Text(
+                      _formatTime(remainingTime),
+                      style: TextStyle(color: Colors.black, fontSize: 16),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            SizedBox(height: 2),
-            Container(
-              height: 40,
-              width: 75,
-              decoration: BoxDecoration(
-                color: Colors.amberAccent[100],
-                borderRadius: BorderRadius.circular(8),
+
+              //progress bar and start/stop button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Progress", style: TextStyle(fontSize: 16)),
+                  //percentage text
+                  Text(
+                    "${((1 - (remainingTime / (subject.time * 60)).clamp(0.0, 1.0)) * 100).round()}%",
+                  ),
+                ],
               ),
-              child: MaterialButton(
-                onPressed: () {
-                  if (isRunning) {
-                    studySessionNotifier.stopSession(subjectId);
-                  } else {
-                    studySessionNotifier.startSession(subject);
-                  }
-                },
-                child: Text(isRunning ? 'Stop' : 'Start'),
+              LinearProgressIndicator(
+                value:
+                    1 - (remainingTime / (subject.time * 60)).clamp(0.0, 1.0),
+                backgroundColor: Colors.grey[300],
+                color: Colors.blueAccent,
+                minHeight: 10,
+                borderRadius: BorderRadius.circular(5),
               ),
-            ),
-          ],
+              Row(
+                children: [
+                  Mybutton(
+                    onPressed: () {
+                      if (isRunning) {
+                        studySessionNotifier.stopSession(subjectId);
+                      } else {
+                        studySessionNotifier.startSession(subject);
+                      }
+                    },
+                    child: Text(isRunning ? 'Stop' : 'Start'),
+                  ),
+                  SizedBox(width: 7),
+                  Mybutton(
+                    onPressed: () {
+                      studySessionNotifier.resetSession(subject);
+                    },
+                    child: Text("Reset"),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -81,6 +115,6 @@ class Subjectcard extends ConsumerWidget {
   String _formatTime(int seconds) {
     final minutes = seconds ~/ 60;
     final secs = seconds % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+    return '${minutes.toString().padLeft(2, '0')}h:${secs.toString().padLeft(2, '0')}m';
   }
 }
