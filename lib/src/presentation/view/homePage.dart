@@ -66,20 +66,18 @@ class Homepage extends ConsumerWidget {
           ],
         ),
       ),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 25,
-        ),
+      body: ListView.builder(
         itemCount: subjects.length,
         itemBuilder: (context, index) {
           final subject = subjects[index];
-          return Subjectcard(
-            subjectName: subject.name,
-            hours: subject.time,
-            subjectId: subject.id,
-            subject: subject,
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Subjectcard(
+              subjectId: subject.id,
+              subjectName: subject.name,
+              hours: subject.time,
+              subject: subject,
+            ),
           );
         },
       ),
