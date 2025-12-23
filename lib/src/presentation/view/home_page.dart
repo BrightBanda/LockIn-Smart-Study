@@ -5,7 +5,7 @@ import 'package:smart_study/src/presentation/viewmodel/SubjectViewModel.dart';
 import 'package:smart_study/src/presentation/viewmodel/selectedDayViewModel.dart';
 import 'package:smart_study/src/presentation/viewmodel/studyScheduleViewModel.dart';
 import 'package:smart_study/src/utils/SubjectCard.dart';
-import 'package:smart_study/src/utils/addSubjectDialog.dart';
+import 'package:smart_study/src/utils/addScheduleDialog.dart';
 import 'package:smart_study/src/utils/dayofWeekButton.dart';
 
 class Homepage extends ConsumerWidget {
@@ -51,9 +51,17 @@ class Homepage extends ConsumerWidget {
             ),
             ListTile(
               leading: Icon(Icons.table_chart_outlined),
-              title: Text('TimeTable'),
+              title: Text('Schedule'),
               onTap: () {
                 Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.library_books_outlined),
+              title: Text('Subjects'),
+              onTap: () {
+                //Navigator.pop(context);
+                Navigator.pushNamed(context, '/subjects');
               },
             ),
             ListTile(
