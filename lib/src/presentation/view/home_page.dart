@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_study/src/data/model/Subject.dart';
+import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/presentation/viewmodel/SubjectViewModel.dart';
+import 'package:smart_study/src/presentation/viewmodel/selectedDayViewModel.dart';
+import 'package:smart_study/src/presentation/viewmodel/studyScheduleViewModel.dart';
 import 'package:smart_study/src/utils/SubjectCard.dart';
 import 'package:smart_study/src/utils/addSubjectDialog.dart';
 import 'package:smart_study/src/utils/dayofWeekButton.dart';
@@ -11,8 +13,12 @@ class Homepage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final schedules = ref.watch(studyScheduleProvider);
+    final selectedDay = ref.watch(selectedDayProvider);
     final subjects = ref.watch(subjectViewModelProvider);
-    final subjectProvider = ref.read(subjectViewModelProvider.notifier);
+    final scheduleProvider = ref.read(studyScheduleProvider.notifier);
+
+    final todaySchedule = schedules.where((s) => s.day == selectedDay).toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -90,13 +96,16 @@ class Homepage extends ConsumerWidget {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: subjects.length,
+                itemCount: todaySchedule.length,
                 itemBuilder: (context, index) {
-                  final subject = subjects[index];
+                  final schedule = schedules[index];
+                  final subject = subjects.firstWhere(
+                    (s) => s.id == schedule.subjectId,
+                  );
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Subjectcard(
-                      subjectId: subject.id,
+                      schedule: schedule,
                       subjectName: subject.name,
                       hours: subject.time,
                       subject: subject,
@@ -110,14 +119,14 @@ class Homepage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final newSubject = await showDialog<Subject>(
+          final newSubject = await showDialog<StudySchedule>(
             context: context,
             builder: (context) {
               return Addsubjectdialog();
             },
           );
           if (newSubject != null) {
-            subjectProvider.addSubject(newSubject);
+            scheduleProvider.addSchedule(newSubject);
           }
         },
         backgroundColor: const Color.fromARGB(255, 36, 36, 36),

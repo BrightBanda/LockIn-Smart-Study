@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_study/src/data/model/Subject.dart';
+//import 'package:smart_study/src/data/model/Subject.dart';
+import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/data/model/studySession.dart';
 
 class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
@@ -11,21 +12,22 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
     return {};
   }
 
-  void startSession(Subject subject) {
-    final subjectId = subject.id;
+  void startSession(StudySchedule schedule) {
+    final scheduleId = schedule.id;
+    final totalSeconds = schedule.minutes * 60;
 
     final currentSession =
-        state[subjectId] ??
-        Studysession(remainingSeconds: subject.time * 60, isRunning: false);
+        state[scheduleId] ??
+        Studysession(remainingSeconds: totalSeconds, isRunning: false);
 
     // Mark as running
-    state = {...state, subjectId: currentSession.copyWith(isRunning: true)};
+    state = {...state, scheduleId: currentSession.copyWith(isRunning: true)};
 
     // Cancel existing timer for this subject
-    _timers[subjectId]?.cancel();
+    _timers[scheduleId]?.cancel();
 
-    _timers[subjectId] = Timer.periodic(const Duration(seconds: 1), (timer) {
-      final session = state[subjectId];
+    _timers[scheduleId] = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final session = state[scheduleId];
       if (session == null || !session.isRunning) {
         timer.cancel();
         return;
@@ -33,13 +35,13 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
 
       if (session.remainingSeconds <= 0) {
         timer.cancel();
-        state = {...state, subjectId: session.copyWith(isRunning: false)};
+        state = {...state, scheduleId: session.copyWith(isRunning: false)};
         return;
       }
 
       state = {
         ...state,
-        subjectId: session.copyWith(
+        scheduleId: session.copyWith(
           remainingSeconds: session.remainingSeconds - 1,
         ),
       };
@@ -56,16 +58,16 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
     state = {...state, subjectId: session.copyWith(isRunning: false)};
   }
 
-  void resetSession(Subject subject) {
-    final subjectId = subject.id;
+  void resetSession(StudySchedule schedule) {
+    final scheduleId = schedule.id;
 
-    _timers[subjectId]?.cancel();
-    _timers.remove(subjectId);
+    _timers[scheduleId]?.cancel();
+    _timers.remove(scheduleId);
 
     state = {
       ...state,
-      subjectId: Studysession(
-        remainingSeconds: subject.time * 60,
+      scheduleId: Studysession(
+        remainingSeconds: schedule.minutes * 60,
         isRunning: false,
       ),
     };

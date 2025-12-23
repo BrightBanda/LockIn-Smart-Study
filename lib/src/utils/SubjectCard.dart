@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_study/src/data/model/Subject.dart';
+import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/presentation/viewmodel/studySessionViewmodel.dart';
 import 'package:smart_study/src/utils/myButton.dart';
 
 class Subjectcard extends ConsumerWidget {
   final String subjectName;
   final int hours;
-  final String subjectId;
+  final StudySchedule schedule;
   final Subject subject;
 
   const Subjectcard({
     super.key,
     required this.subjectName,
     required this.hours,
-    required this.subjectId,
+    required this.schedule,
     required this.subject,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sessions = ref.watch(studySessionProvider);
-    final session = sessions[subjectId];
+    final session = sessions[schedule.id];
     final studySessionNotifier = ref.read(studySessionProvider.notifier);
 
     final remainingTime = session?.remainingSeconds ?? subject.time * 60;
@@ -89,9 +90,9 @@ class Subjectcard extends ConsumerWidget {
                   Mybutton(
                     onPressed: () {
                       if (isRunning) {
-                        studySessionNotifier.stopSession(subjectId);
+                        studySessionNotifier.stopSession(schedule.id);
                       } else {
-                        studySessionNotifier.startSession(subject);
+                        studySessionNotifier.startSession(schedule);
                       }
                     },
                     child: Text(isRunning ? 'Stop' : 'Start'),
@@ -99,7 +100,7 @@ class Subjectcard extends ConsumerWidget {
                   SizedBox(width: 7),
                   Mybutton(
                     onPressed: () {
-                      studySessionNotifier.resetSession(subject);
+                      studySessionNotifier.resetSession(schedule);
                     },
                     child: Text("Reset"),
                   ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_study/src/presentation/view/homePage.dart';
+import 'package:smart_study/src/presentation/view/home_page.dart';
 
 void main() {
   runApp(ProviderScope(child: const MyApp()));
