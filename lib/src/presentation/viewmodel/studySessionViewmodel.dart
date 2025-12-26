@@ -48,14 +48,14 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
     });
   }
 
-  void stopSession(String subjectId) {
-    _timers[subjectId]?.cancel();
-    _timers.remove(subjectId);
+  void stopSession(String scheduleId) {
+    _timers[scheduleId]?.cancel();
+    _timers.remove(scheduleId);
 
-    final session = state[subjectId];
+    final session = state[scheduleId];
     if (session == null) return;
 
-    state = {...state, subjectId: session.copyWith(isRunning: false)};
+    state = {...state, scheduleId: session.copyWith(isRunning: false)};
   }
 
   void resetSession(StudySchedule schedule) {

@@ -106,18 +106,13 @@ class Homepage extends ConsumerWidget {
               child: ListView.builder(
                 itemCount: todaySchedule.length,
                 itemBuilder: (context, index) {
-                  final schedule = schedules[index];
+                  final schedule = todaySchedule[index];
                   final subject = subjects.firstWhere(
                     (s) => s.id == schedule.subjectId,
                   );
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Subjectcard(
-                      schedule: schedule,
-                      subjectName: subject.name,
-                      hours: subject.time,
-                      subject: subject,
-                    ),
+                    child: Subjectcard(schedule: schedule, subject: subject),
                   );
                 },
               ),
@@ -130,7 +125,7 @@ class Homepage extends ConsumerWidget {
           final newSubject = await showDialog<StudySchedule>(
             context: context,
             builder: (context) {
-              return Addsubjectdialog();
+              return AddScheduleDialog();
             },
           );
           if (newSubject != null) {

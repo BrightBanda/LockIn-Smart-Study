@@ -6,108 +6,84 @@ import 'package:smart_study/src/presentation/viewmodel/studySessionViewmodel.dar
 import 'package:smart_study/src/utils/myButton.dart';
 
 class Subjectcard extends ConsumerWidget {
-  final String subjectName;
-  final int hours;
   final StudySchedule schedule;
   final Subject subject;
 
-  const Subjectcard({
-    super.key,
-    required this.subjectName,
-    required this.hours,
-    required this.schedule,
-    required this.subject,
-  });
+  const Subjectcard({super.key, required this.schedule, required this.subject});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sessions = ref.watch(studySessionProvider);
     final session = sessions[schedule.id];
-    final studySessionNotifier = ref.read(studySessionProvider.notifier);
+    final notifier = ref.read(studySessionProvider.notifier);
 
-    final remainingTime = session?.remainingSeconds ?? subject.time * 60;
+    final totalSeconds = schedule.minutes * 60;
+    final remainingSeconds = session?.remainingSeconds ?? totalSeconds;
     final isRunning = session?.isRunning ?? false;
-    return Container(
-      height: 300,
-      padding: EdgeInsets.all(8.0),
-      child: Card(
-        color: isRunning ? Colors.yellow[100] : Colors.white,
-        shadowColor: Colors.black54,
-        elevation: 10,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              //icon,subject and name row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(Icons.book, size: 30, color: Colors.greenAccent),
 
-                  Text(
-                    subjectName,
-                    style: TextStyle(color: Colors.black, fontSize: 18),
-                  ),
-                  SizedBox(width: 20),
-                  //timer display
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                    child: Text(
-                      _formatTime(remainingTime),
-                      style: TextStyle(color: Colors.black, fontSize: 16),
-                    ),
-                  ),
-                ],
-              ),
+    final progress = 1 - (remainingSeconds / totalSeconds).clamp(0.0, 1.0);
 
-              //progress bar and start/stop button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Progress", style: TextStyle(fontSize: 16)),
-                  //percentage text
-                  Text(
-                    "${((1 - (remainingTime / (subject.time * 60)).clamp(0.0, 1.0)) * 100).round()}%",
+    return Card(
+      color: Colors.white,
+      elevation: 6,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title + timer
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  subject.name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              ),
-              LinearProgressIndicator(
-                value:
-                    1 - (remainingTime / (subject.time * 60)).clamp(0.0, 1.0),
-                backgroundColor: Colors.grey[300],
-                color: Colors.blueAccent,
-                minHeight: 10,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              Row(
-                children: [
-                  Mybutton(
-                    onPressed: () {
-                      if (isRunning) {
-                        studySessionNotifier.stopSession(schedule.id);
-                      } else {
-                        studySessionNotifier.startSession(schedule);
-                      }
-                    },
-                    child: Text(isRunning ? 'Stop' : 'Start'),
-                  ),
-                  SizedBox(width: 7),
-                  Mybutton(
-                    onPressed: () {
-                      studySessionNotifier.resetSession(schedule);
-                    },
-                    child: Text("Reset"),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+                Text(_formatTime(remainingSeconds)),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+
+            // Progress
+            LinearProgressIndicator(
+              value: progress,
+              minHeight: 10,
+              borderRadius: BorderRadius.circular(6),
+              color: Colors.blueAccent[100],
+            ),
+
+            const SizedBox(height: 6),
+            Text("${(progress * 100).round()}%"),
+
+            const SizedBox(height: 12),
+
+            // Buttons
+            Row(
+              children: [
+                Mybutton(
+                  onPressed: () {
+                    if (isRunning) {
+                      notifier.stopSession(schedule.id);
+                    } else {
+                      notifier.startSession(schedule);
+                    }
+                  },
+                  child: Text(isRunning ? "Stop" : "Start"),
+                ),
+                const SizedBox(width: 8),
+                Mybutton(
+                  onPressed: () {
+                    notifier.resetSession(schedule);
+                  },
+                  child: const Text("Reset"),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

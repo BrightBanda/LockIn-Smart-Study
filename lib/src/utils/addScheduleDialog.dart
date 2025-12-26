@@ -1,34 +1,74 @@
 import 'package:flutter/material.dart';
-import 'package:smart_study/src/data/model/Subject.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+//import 'package:smart_study/src/data/model/Subject.dart';
+import 'package:smart_study/src/data/model/studySchedule.dart';
+import 'package:smart_study/src/presentation/viewmodel/SubjectViewModel.dart';
 
-class Addsubjectdialog extends StatelessWidget {
-  String name = '';
+class AddScheduleDialog extends ConsumerStatefulWidget {
+  const AddScheduleDialog({super.key});
+
+  @override
+  ConsumerState<AddScheduleDialog> createState() => _AddScheduleDialogState();
+}
+
+class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
+  WeekDay selectedDay = WeekDay.mon;
+  String? selectedSubjectId;
   String hoursStr = '';
   String minutesStr = '';
-  Addsubjectdialog({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final subjects = ref.watch(subjectViewModelProvider);
+
     return AlertDialog(
-      title: Text('Add New Subject'),
+      title: const Text('Add Schedule'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextField(
-            decoration: InputDecoration(labelText: 'Subject Name'),
-            onChanged: (value) {
-              name = value;
-            },
+          Row(
+            children: [
+              DropdownButton<WeekDay>(
+                value: selectedDay,
+                items: WeekDay.values
+                    .map(
+                      (day) => DropdownMenuItem(
+                        value: day,
+                        child: Text(day.name.toUpperCase()),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() => selectedDay = value);
+                  }
+                },
+              ),
+
+              const SizedBox(width: 12),
+
+              DropdownButton<String>(
+                hint: const Text('Select Subject'),
+                value: selectedSubjectId,
+                items: subjects
+                    .map(
+                      (s) => DropdownMenuItem(value: s.id, child: Text(s.name)),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  setState(() => selectedSubjectId = value);
+                },
+              ),
+            ],
           ),
+
           Row(
             children: [
               Expanded(
                 child: TextField(
                   decoration: const InputDecoration(labelText: 'Hours'),
                   keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    hoursStr = value;
-                  },
+                  onChanged: (v) => hoursStr = v,
                 ),
               ),
               const SizedBox(width: 10),
@@ -36,9 +76,7 @@ class Addsubjectdialog extends StatelessWidget {
                 child: TextField(
                   decoration: const InputDecoration(labelText: 'Minutes'),
                   keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    minutesStr = value;
-                  },
+                  onChanged: (v) => minutesStr = v,
                 ),
               ),
             ],
@@ -47,27 +85,27 @@ class Addsubjectdialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text('CANCEL'),
+          onPressed: () => Navigator.pop(context),
+          child: const Text('CANCEL'),
         ),
         TextButton(
           onPressed: () {
-            final hours = int.tryParse(hoursStr) ?? 0;
-            final minutes = int.tryParse(minutesStr) ?? 0;
+            if (selectedSubjectId == null) return;
 
-            final safeMinutes = minutes.clamp(0, 59);
-            final totalTime = (hours * 60) + safeMinutes;
-            final subject = Subject(
-              id: DateTime.now().toString(),
-              name: name,
-              time: totalTime,
-              isCompleted: false,
+            final hours = int.tryParse(hoursStr) ?? 0;
+            final minutes = (int.tryParse(minutesStr) ?? 0).clamp(0, 59);
+
+            Navigator.pop(
+              context,
+              StudySchedule(
+                id: DateTime.now().toIso8601String(),
+                subjectId: selectedSubjectId!,
+                day: selectedDay,
+                minutes: (hours * 60) + minutes,
+              ),
             );
-            Navigator.of(context).pop(subject);
           },
-          child: Text('ADD'),
+          child: const Text('ADD'),
         ),
       ],
     );
