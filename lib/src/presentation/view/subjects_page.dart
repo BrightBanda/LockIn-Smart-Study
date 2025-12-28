@@ -25,16 +25,32 @@ class SubjectsPage extends ConsumerWidget {
       ),
 
       body: SafeArea(
-        child: ListView.builder(
-          itemCount: subjects.length,
-          itemBuilder: (BuildContext context, int index) {
-            final subject = subjects[index];
-            return SubjectTile(
-              subjectName: subject.name,
-              onPressed: (context) => subjectProv.removeSubject(subject.id),
-            );
-          },
-        ),
+        child: subjects.isEmpty
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "No subjects added yet",
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                  Text(
+                    "       press the '+' button to add a subject",
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                ],
+              )
+            : ListView.builder(
+                itemCount: subjects.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final subject = subjects[index];
+                  return SubjectTile(
+                    subjectName: subject.name,
+                    onPressed: (context) =>
+                        subjectProv.removeSubject(subject.id),
+                  );
+                },
+              ),
       ),
 
       floatingActionButton: FloatingActionButton(

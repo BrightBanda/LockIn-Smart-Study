@@ -56,7 +56,7 @@ class Homepage extends ConsumerWidget {
               leading: Icon(Icons.library_books_outlined),
               title: Text('Subjects'),
               onTap: () {
-                //Navigator.pop(context);
+                Navigator.pop(context);
                 Navigator.pushNamed(context, '/subjects');
               },
             ),
@@ -111,7 +111,7 @@ class Homepage extends ConsumerWidget {
                   if (subject == null) {
                     return const ListTile(
                       title: Text('Subject not found'),
-                      // trailing: IconButton(onPressed:(){} , icon: Icon(Icons.info)),
+                      //trailing: IconButton(onPressed:  , icon: Icon(Icons.info)),
                     );
                   }
                   return Padding(

@@ -19,7 +19,37 @@ class SubjectTile extends StatelessWidget {
           motion: StretchMotion(),
           children: [
             SlidableAction(
-              onPressed: onPressed,
+              onPressed: (context) async {
+                final shouldDelete = await showDialog<bool>(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text("Delete Subject"),
+                      content: const Text(
+                        "Deleting this subject will also delete all schedules linked to it. "
+                        "Are you sure you want to continue?",
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text("Cancel"),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text("Delete"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+
+                if (shouldDelete == true) {
+                  onPressed?.call(context);
+                }
+              },
               backgroundColor: Colors.deepOrangeAccent,
               icon: Icons.delete_outline,
             ),
