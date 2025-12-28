@@ -7,6 +7,7 @@ import 'package:smart_study/src/presentation/viewmodel/selectedDayViewModel.dart
 import 'package:smart_study/src/presentation/viewmodel/studyScheduleViewModel.dart';
 import 'package:smart_study/src/utils/SubjectCard.dart';
 import 'package:smart_study/src/utils/addScheduleDialog.dart';
+import 'package:smart_study/src/utils/clearDataDialog.dart';
 import 'package:smart_study/src/utils/dayofWeekButton.dart';
 
 class Homepage extends ConsumerWidget {
@@ -73,6 +74,7 @@ class Homepage extends ConsumerWidget {
                 Navigator.pop(context);
               },
             ),
+            ClearDataDialog(),
           ],
         ),
       ),

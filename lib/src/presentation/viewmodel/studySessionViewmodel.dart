@@ -1,76 +1,92 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-//import 'package:smart_study/src/data/model/Subject.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/data/model/studySession.dart';
 
 class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
-  Map<String, Timer> _timers = {};
+  late Box<Studysession> _box;
+  final Map<String, Timer> _timers = {};
+
   @override
   Map<String, Studysession> build() {
-    // Initial state
-    return {};
+    _box = Hive.box<Studysession>('sessions');
+
+    ref.onDispose(() {
+      for (final timer in _timers.values) {
+        timer.cancel();
+      }
+      _timers.clear();
+    });
+
+    return Map<String, Studysession>.from(_box.toMap());
   }
 
   void startSession(StudySchedule schedule) {
-    final scheduleId = schedule.id;
+    final id = schedule.id;
     final totalSeconds = schedule.minutes * 60;
 
-    final currentSession =
-        state[scheduleId] ??
+    final session =
+        state[id] ??
         Studysession(remainingSeconds: totalSeconds, isRunning: false);
 
-    // Mark as running
-    state = {...state, scheduleId: currentSession.copyWith(isRunning: true)};
+    if (session.remainingSeconds <= 0) {
+      resetSession(schedule);
+    }
 
-    // Cancel existing timer for this subject
-    _timers[scheduleId]?.cancel();
+    final running = session.copyWith(isRunning: true);
+    _save(id, running);
 
-    _timers[scheduleId] = Timer.periodic(const Duration(seconds: 1), (timer) {
-      final session = state[scheduleId];
-      if (session == null || !session.isRunning) {
-        timer.cancel();
+    _timers[id]?.cancel();
+    _timers[id] = Timer.periodic(const Duration(seconds: 1), (_) {
+      final current = state[id];
+      if (current == null || !current.isRunning) return;
+
+      if (current.remainingSeconds <= 1) {
+        stopSession(id);
         return;
       }
 
-      if (session.remainingSeconds <= 0) {
-        timer.cancel();
-        state = {...state, scheduleId: session.copyWith(isRunning: false)};
-        return;
-      }
-
-      state = {
-        ...state,
-        scheduleId: session.copyWith(
-          remainingSeconds: session.remainingSeconds - 1,
-        ),
-      };
+      _save(
+        id,
+        current.copyWith(remainingSeconds: current.remainingSeconds - 1),
+      );
     });
   }
 
-  void stopSession(String scheduleId) {
-    _timers[scheduleId]?.cancel();
-    _timers.remove(scheduleId);
+  void stopSession(String id) {
+    _timers[id]?.cancel();
+    _timers.remove(id);
 
-    final session = state[scheduleId];
+    final session = state[id];
     if (session == null) return;
 
-    state = {...state, scheduleId: session.copyWith(isRunning: false)};
+    _save(id, session.copyWith(isRunning: false));
   }
 
   void resetSession(StudySchedule schedule) {
-    final scheduleId = schedule.id;
+    _timers[schedule.id]?.cancel();
+    _timers.remove(schedule.id);
 
-    _timers[scheduleId]?.cancel();
-    _timers.remove(scheduleId);
+    _save(
+      schedule.id,
+      Studysession(remainingSeconds: schedule.minutes * 60, isRunning: false),
+    );
+  }
 
-    state = {
-      ...state,
-      scheduleId: Studysession(
-        remainingSeconds: schedule.minutes * 60,
-        isRunning: false,
-      ),
-    };
+  void clearSessions() {
+    for (final timer in _timers.values) {
+      timer.cancel();
+    }
+    _timers.clear();
+
+    _box.clear();
+    state = {};
+  }
+
+  void _save(String id, Studysession session) {
+    _box.put(id, session);
+    state = {...state, id: session};
   }
 }
 

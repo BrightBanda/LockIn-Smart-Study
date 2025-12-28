@@ -15,12 +15,11 @@ class Studyscheduleviewmodel extends Notifier<List<StudySchedule>> {
   }
 
   void removeSchedule(String scheduleId) {
-    //state = state.where((s) => s.id != scheduleId).toList();
     _box.delete(scheduleId);
     state = _box.values.toList();
   }
 
-  void clearData() {
+  void clearSchedules() {
     _box.clear();
     state = [];
   }

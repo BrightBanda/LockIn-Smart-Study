@@ -32,7 +32,7 @@ class Subjectviewmodel extends Notifier<List<Subject>> {
     state = _box.values.toList();
   }
 
-  void clearData() {
+  void clearSubjects() {
     _box.clear();
     state = [];
   }
