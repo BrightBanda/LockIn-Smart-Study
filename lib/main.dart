@@ -16,6 +16,9 @@ void main() async {
   Hive.registerAdapter(StudyScheduleAdapter());
   Hive.registerAdapter(WeekDayAdapter());
 
+  await Hive.deleteBoxFromDisk('schedules');
+  await Hive.deleteBoxFromDisk('sessions');
+
   await Hive.openBox<Subject>('subjects');
   await Hive.openBox<Studysession>('sessions');
   await Hive.openBox<StudySchedule>('schedules');

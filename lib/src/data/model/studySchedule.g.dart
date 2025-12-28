@@ -21,13 +21,14 @@ class StudyScheduleAdapter extends TypeAdapter<StudySchedule> {
       subjectId: fields[1] as String,
       day: fields[2] as WeekDay,
       minutes: fields[3] as int,
+      isCompleted: fields[4] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, StudySchedule obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class StudyScheduleAdapter extends TypeAdapter<StudySchedule> {
       ..writeByte(2)
       ..write(obj.day)
       ..writeByte(3)
-      ..write(obj.minutes);
+      ..write(obj.minutes)
+      ..writeByte(4)
+      ..write(obj.isCompleted);
   }
 
   @override

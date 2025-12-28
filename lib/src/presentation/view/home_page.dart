@@ -100,31 +100,39 @@ class Homepage extends ConsumerWidget {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: todaySchedule.length,
-                itemBuilder: (context, index) {
-                  final schedule = todaySchedule[index];
-                  final subject = subjects.cast<Subject?>().firstWhere(
-                    (s) => s?.id == schedule.subjectId,
-                    orElse: () => null,
-                  );
-                  if (subject == null) {
-                    return const ListTile(
-                      title: Text('Subject not found'),
-                      //trailing: IconButton(onPressed:  , icon: Icon(Icons.info)),
-                    );
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Subjectcard(
-                      schedule: schedule,
-                      subject: subject,
-                      onPressed: (context) =>
-                          scheduleProvider.removeSchedule(schedule.id),
+              child: todaySchedule.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No schedules for this day 📭',
+                        style: TextStyle(fontSize: 18, color: Colors.grey),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: todaySchedule.length,
+                      itemBuilder: (context, index) {
+                        final schedule = todaySchedule[index];
+                        final subject = subjects.cast<Subject?>().firstWhere(
+                          (s) => s?.id == schedule.subjectId,
+                          orElse: () => null,
+                        );
+
+                        if (subject == null) {
+                          return const ListTile(
+                            title: Text('Subject not found'),
+                          );
+                        }
+
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Subjectcard(
+                            schedule: schedule,
+                            subject: subject,
+                            onPressed: (context) =>
+                                scheduleProvider.removeSchedule(schedule.id),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),

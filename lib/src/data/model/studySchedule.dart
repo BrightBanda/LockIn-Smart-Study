@@ -34,10 +34,24 @@ class StudySchedule {
   @HiveField(3)
   final int minutes;
 
+  @HiveField(4)
+  final bool isCompleted;
+
   StudySchedule({
     required this.id,
     required this.subjectId,
     required this.day,
     required this.minutes,
+    this.isCompleted = false,
   });
+
+  StudySchedule copyWith({bool? isCompleted}) {
+    return StudySchedule(
+      id: id,
+      subjectId: subjectId,
+      day: day,
+      minutes: minutes,
+      isCompleted: isCompleted ?? this.isCompleted,
+    );
+  }
 }

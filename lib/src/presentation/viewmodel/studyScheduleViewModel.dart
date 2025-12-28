@@ -23,6 +23,17 @@ class Studyscheduleviewmodel extends Notifier<List<StudySchedule>> {
     _box.clear();
     state = [];
   }
+
+  void markCompleted(String scheduleId) {
+    state = state.map((s) {
+      if (s.id == scheduleId) {
+        final updated = s.copyWith(isCompleted: true);
+        Hive.box<StudySchedule>('schedules').put(scheduleId, updated);
+        return updated;
+      }
+      return s;
+    }).toList();
+  }
 }
 
 final studyScheduleProvider =

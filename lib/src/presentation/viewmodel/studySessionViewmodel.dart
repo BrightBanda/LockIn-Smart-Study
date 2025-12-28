@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/data/model/studySession.dart';
+import 'package:smart_study/src/presentation/viewmodel/studyScheduleViewModel.dart';
 
 class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
   late Box<Studysession> _box;
@@ -38,19 +39,25 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
     _save(id, running);
 
     _timers[id]?.cancel();
-    _timers[id] = Timer.periodic(const Duration(seconds: 1), (_) {
+    _timers[id] = _timers[id] = Timer.periodic(const Duration(seconds: 1), (_) {
       final current = state[id];
       if (current == null || !current.isRunning) return;
 
-      if (current.remainingSeconds <= 1) {
-        stopSession(id);
+      final nextSeconds = current.remainingSeconds - 1;
+
+      if (nextSeconds <= 0) {
+        // SAVE 0 FIRST
+        _save(id, current.copyWith(remainingSeconds: 0, isRunning: false));
+
+        _timers[id]?.cancel();
+        _timers.remove(id);
+
+        // MARK SCHEDULE COMPLETE
+        ref.read(studyScheduleProvider.notifier).markCompleted(id);
         return;
       }
 
-      _save(
-        id,
-        current.copyWith(remainingSeconds: current.remainingSeconds - 1),
-      );
+      _save(id, current.copyWith(remainingSeconds: nextSeconds));
     });
   }
 

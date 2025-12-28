@@ -23,9 +23,12 @@ class Subjectcard extends ConsumerWidget {
     final sessions = ref.watch(studySessionProvider);
     final session = sessions[schedule.id];
     final notifier = ref.read(studySessionProvider.notifier);
+
     final totalSeconds = schedule.minutes * 60;
     final remainingSeconds = session?.remainingSeconds ?? totalSeconds;
+
     final isRunning = session?.isRunning ?? false;
+    final isCompleted = schedule.isCompleted;
 
     final progress = 1 - (remainingSeconds / totalSeconds).clamp(0.0, 1.0);
 
@@ -42,7 +45,11 @@ class Subjectcard extends ConsumerWidget {
         ],
       ),
       child: Card(
-        color: isRunning ? Colors.amberAccent[100] : Colors.white,
+        color: isCompleted
+            ? Colors.greenAccent
+            : isRunning
+            ? Colors.amberAccent[100]
+            : Colors.white,
         elevation: 6,
         child: Padding(
           padding: const EdgeInsets.all(12),
