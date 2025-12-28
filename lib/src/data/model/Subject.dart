@@ -1,13 +1,14 @@
-class Subject {
-  final String id;
-  final String name;
-  final int time;
-  final bool isCompleted;
+import 'package:hive/hive.dart';
 
-  Subject({
-    required this.id,
-    required this.name,
-    required this.time,
-    required this.isCompleted,
-  });
+part 'Subject.g.dart';
+
+@HiveType(typeId: 0)
+class Subject {
+  @HiveField(0)
+  final String id;
+
+  @HiveField(1)
+  final String name;
+
+  Subject({required this.id, required this.name});
 }

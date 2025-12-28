@@ -21,8 +21,8 @@ class AddSubjectDialog extends StatelessWidget {
             final subject = Subject(
               id: DateTime.now().toString(),
               name: name,
-              time: 60,
-              isCompleted: false,
+              //time: 60,
+              //isCompleted: false,
             );
             Navigator.of(context).pop(subject);
           },

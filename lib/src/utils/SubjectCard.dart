@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:smart_study/src/data/model/Subject.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/presentation/viewmodel/studySessionViewmodel.dart';
@@ -8,82 +9,100 @@ import 'package:smart_study/src/utils/myButton.dart';
 class Subjectcard extends ConsumerWidget {
   final StudySchedule schedule;
   final Subject subject;
+  final void Function(BuildContext)? onPressed;
 
-  const Subjectcard({super.key, required this.schedule, required this.subject});
+  const Subjectcard({
+    super.key,
+    required this.schedule,
+    required this.subject,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sessions = ref.watch(studySessionProvider);
     final session = sessions[schedule.id];
     final notifier = ref.read(studySessionProvider.notifier);
-
     final totalSeconds = schedule.minutes * 60;
     final remainingSeconds = session?.remainingSeconds ?? totalSeconds;
     final isRunning = session?.isRunning ?? false;
 
     final progress = 1 - (remainingSeconds / totalSeconds).clamp(0.0, 1.0);
 
-    return Card(
-      color: Colors.white,
-      elevation: 6,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Title + timer
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  subject.name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+    return Slidable(
+      endActionPane: ActionPane(
+        motion: ScrollMotion(),
+        children: [
+          SlidableAction(
+            onPressed: onPressed,
+            icon: Icons.delete,
+            label: "Remove",
+            backgroundColor: Colors.deepOrangeAccent,
+          ),
+        ],
+      ),
+      child: Card(
+        color: isRunning ? Colors.amberAccent[100] : Colors.white,
+        elevation: 6,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title + timer
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    subject.name,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(_formatTime(remainingSeconds)),
-              ],
-            ),
+                  Text(_formatTime(remainingSeconds)),
+                ],
+              ),
 
-            const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-            // Progress
-            LinearProgressIndicator(
-              value: progress,
-              minHeight: 10,
-              borderRadius: BorderRadius.circular(6),
-              color: Colors.blueAccent[100],
-            ),
+              // Progress
+              LinearProgressIndicator(
+                value: progress,
+                minHeight: 10,
+                borderRadius: BorderRadius.circular(6),
+                color: Colors.blueAccent[100],
+              ),
 
-            const SizedBox(height: 6),
-            Text("${(progress * 100).round()}%"),
+              const SizedBox(height: 6),
+              Text("${(progress * 100).round()}%"),
 
-            const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-            // Buttons
-            Row(
-              children: [
-                Mybutton(
-                  onPressed: () {
-                    if (isRunning) {
-                      notifier.stopSession(schedule.id);
-                    } else {
-                      notifier.startSession(schedule);
-                    }
-                  },
-                  child: Text(isRunning ? "Stop" : "Start"),
-                ),
-                const SizedBox(width: 8),
-                Mybutton(
-                  onPressed: () {
-                    notifier.resetSession(schedule);
-                  },
-                  child: const Text("Reset"),
-                ),
-              ],
-            ),
-          ],
+              // Buttons
+              Row(
+                children: [
+                  Mybutton(
+                    onPressed: () {
+                      if (isRunning) {
+                        notifier.stopSession(schedule.id);
+                      } else {
+                        notifier.startSession(schedule);
+                      }
+                    },
+                    child: Text(isRunning ? "Stop" : "Start"),
+                  ),
+                  const SizedBox(width: 8),
+                  Mybutton(
+                    onPressed: () {
+                      notifier.resetSession(schedule);
+                    },
+                    child: const Text("Reset"),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

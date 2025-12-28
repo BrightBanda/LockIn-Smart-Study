@@ -1,23 +1,40 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:smart_study/src/data/model/Subject.dart';
+import 'package:smart_study/src/data/model/studySchedule.dart';
 
 class Subjectviewmodel extends Notifier<List<Subject>> {
+  final _box = Hive.box<Subject>('subjects');
   @override
   List<Subject> build() {
     // Initial list of subjects
-    return [
-      Subject(id: '1', name: 'Mathematics', time: 40, isCompleted: false),
-      Subject(id: '2', name: 'Physics', time: 35, isCompleted: true),
-      Subject(id: '3', name: 'Chemistry', time: 30, isCompleted: false),
-    ];
+    return _box.values.toList();
   }
 
   void addSubject(Subject subject) {
-    state = [...state, subject];
+    _box.put(subject.id, subject);
+    state = _box.values.toList();
   }
 
   void removeSubject(String id) {
-    state = state.where((subject) => subject.id != id).toList();
+    _box.delete(id);
+
+    final scheduleBox = Hive.box<StudySchedule>('schedules');
+    final toDelete = scheduleBox.values
+        .where((s) => s.subjectId == id)
+        .map((s) => s.id)
+        .toList();
+
+    for (final sid in toDelete) {
+      scheduleBox.delete(sid);
+    }
+
+    state = _box.values.toList();
+  }
+
+  void clearData() {
+    _box.clear();
+    state = [];
   }
 
   void markAsCompleted(String id) {
@@ -27,8 +44,8 @@ class Subjectviewmodel extends Notifier<List<Subject>> {
               ? Subject(
                   id: subject.id,
                   name: subject.name,
-                  time: subject.time,
-                  isCompleted: true,
+                  //time: subject.time,
+                  //isCompleted: true,
                 )
               : subject,
         )

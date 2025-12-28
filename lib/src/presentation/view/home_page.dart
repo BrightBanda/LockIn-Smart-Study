@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_study/src/data/model/Subject.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/presentation/viewmodel/SubjectViewModel.dart';
 import 'package:smart_study/src/presentation/viewmodel/selectedDayViewModel.dart';
@@ -43,19 +44,13 @@ class Homepage extends ConsumerWidget {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.home_outlined),
-              title: Text('Home'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
               leading: Icon(Icons.table_chart_outlined),
               title: Text('Schedule'),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
+
             ListTile(
               leading: Icon(Icons.library_books_outlined),
               title: Text('Subjects'),
@@ -107,12 +102,24 @@ class Homepage extends ConsumerWidget {
                 itemCount: todaySchedule.length,
                 itemBuilder: (context, index) {
                   final schedule = todaySchedule[index];
-                  final subject = subjects.firstWhere(
-                    (s) => s.id == schedule.subjectId,
+                  final subject = subjects.cast<Subject?>().firstWhere(
+                    (s) => s?.id == schedule.subjectId,
+                    orElse: () => null,
                   );
+                  if (subject == null) {
+                    return const ListTile(
+                      title: Text('Subject not found'),
+                      // trailing: IconButton(onPressed:(){} , icon: Icon(Icons.info)),
+                    );
+                  }
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Subjectcard(schedule: schedule, subject: subject),
+                    child: Subjectcard(
+                      schedule: schedule,
+                      subject: subject,
+                      onPressed: (context) =>
+                          scheduleProvider.removeSchedule(schedule.id),
+                    ),
                   );
                 },
               ),

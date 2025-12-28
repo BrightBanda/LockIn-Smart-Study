@@ -31,7 +31,7 @@ class SubjectsPage extends ConsumerWidget {
             final subject = subjects[index];
             return SubjectTile(
               subjectName: subject.name,
-              onPressed: () => subjectProv.removeSubject(subject.id),
+              onPressed: (context) => subjectProv.removeSubject(subject.id),
             );
           },
         ),
