@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "502647647322",
+    "project_id": "lockin-smart-study",
+    "storage_bucket": "lockin-smart-study.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:502647647322:android:695c7570d547f3494b7c63",
+        "android_client_info": {
+          "package_name": "com.example.smart_study"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaG7K8_qvVKxqyNzSXkZoNPs-On6MUYM0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

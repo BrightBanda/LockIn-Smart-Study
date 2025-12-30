@@ -46,13 +46,11 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
       final nextSeconds = current.remainingSeconds - 1;
 
       if (nextSeconds <= 0) {
-        // SAVE 0 FIRST
         _save(id, current.copyWith(remainingSeconds: 0, isRunning: false));
 
         _timers[id]?.cancel();
         _timers.remove(id);
 
-        // MARK SCHEDULE COMPLETE
         ref.read(studyScheduleProvider.notifier).markCompleted(id);
         return;
       }

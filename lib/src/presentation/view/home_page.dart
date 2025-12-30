@@ -5,6 +5,7 @@ import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/presentation/viewmodel/SubjectViewModel.dart';
 import 'package:smart_study/src/presentation/viewmodel/selectedDayViewModel.dart';
 import 'package:smart_study/src/presentation/viewmodel/studyScheduleViewModel.dart';
+import 'package:smart_study/src/presentation/viewmodel/themeManagerViewmodel.dart';
 import 'package:smart_study/src/utils/SubjectCard.dart';
 import 'package:smart_study/src/utils/addScheduleDialog.dart';
 import 'package:smart_study/src/utils/clearDataDialog.dart';
@@ -15,6 +16,8 @@ class Homepage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final themeNotifier = ref.watch(themeNotifierProvider);
+
     final schedules = ref.watch(studyScheduleProvider);
     final selectedDay = ref.watch(selectedDayProvider);
     final subjects = ref.watch(subjectViewModelProvider);
@@ -26,22 +29,39 @@ class Homepage extends ConsumerWidget {
         title: Text(
           "Smart Study 🧠",
           style: TextStyle(
-            color: Colors.black,
+            color: Theme.of(context).textTheme.bodyMedium?.color,
             fontSize: 30,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: () {
+              ref.read(themeNotifierProvider.notifier).toggleTheme();
+            },
+            icon: Icon(
+              themeNotifier == ThemeMode.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+          ),
+        ],
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(color: Colors.grey[300]),
+              decoration: BoxDecoration(
+                color: Theme.of(context).drawerTheme.backgroundColor,
+              ),
               child: Text(
                 'Menu',
-                style: TextStyle(color: Colors.black, fontSize: 24),
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                  fontSize: 24,
+                ),
               ),
             ),
             ListTile(
@@ -62,7 +82,22 @@ class Homepage extends ConsumerWidget {
             ),
             ListTile(
               leading: Icon(Icons.settings_outlined),
-              title: Text('Settings'),
+              title: Text('Stats'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+
+            ListTile(
+              leading: Icon(Icons.settings_outlined),
+              title: Text('History'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings_outlined),
+              title: Text('Profile'),
               onTap: () {
                 Navigator.pop(context);
               },

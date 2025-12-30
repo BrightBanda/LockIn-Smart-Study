@@ -11,7 +11,7 @@ class Mybutton extends StatelessWidget {
       height: 40,
       width: 75,
       decoration: BoxDecoration(
-        color: Colors.blueAccent[100],
+        color: const Color.fromARGB(255, 84, 141, 238),
         borderRadius: BorderRadius.circular(8),
       ),
       child: MaterialButton(onPressed: onPressed, child: child),
