@@ -18,12 +18,7 @@ class AddSubjectDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () {
-            final subject = Subject(
-              id: DateTime.now().toString(),
-              name: name,
-              //time: 60,
-              //isCompleted: false,
-            );
+            final subject = Subject(id: DateTime.now().toString(), name: name);
             Navigator.of(context).pop(subject);
           },
           child: Text('ADD'),
