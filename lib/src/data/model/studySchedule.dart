@@ -54,4 +54,19 @@ class StudySchedule {
       isCompleted: isCompleted ?? this.isCompleted,
     );
   }
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'subjectId': subjectId,
+    'day': day,
+    'minutes': minutes,
+    'isComplete': isCompleted,
+  };
+
+  factory StudySchedule.fromMap(Map<String, dynamic> map) => StudySchedule(
+    id: map['id'],
+    subjectId: map['subjectId'],
+    day: map['day'],
+    minutes: map['minutes'],
+  );
 }

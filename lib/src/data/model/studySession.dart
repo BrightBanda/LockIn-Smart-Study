@@ -18,4 +18,14 @@ class Studysession {
       isRunning: isRunning ?? this.isRunning,
     );
   }
+
+  Map<String, dynamic> toMap() => {
+    'remainingSeconds': remainingSeconds,
+    'isRunning': isRunning,
+  };
+
+  factory Studysession.fromMap(Map<String, dynamic> map) => Studysession(
+    remainingSeconds: map['remainingSeconds'],
+    isRunning: map['isRunning'],
+  );
 }

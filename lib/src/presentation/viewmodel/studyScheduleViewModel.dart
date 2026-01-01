@@ -1,42 +1,67 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
+import 'package:smart_study/src/presentation/viewmodel/auth_provide.dart';
 
-class Studyscheduleviewmodel extends Notifier<List<StudySchedule>> {
-  final _box = Hive.box<StudySchedule>('schedules');
+class StudyScheduleViewModel extends Notifier<List<StudySchedule>> {
   @override
   List<StudySchedule> build() {
-    return _box.values.toList();
+    _listen();
+    return [];
   }
 
-  void addSchedule(StudySchedule schedule) {
-    _box.put(schedule.id, schedule);
-    state = _box.values.toList();
+  void _listen() {
+    final userData = ref.read(userDataServiceProvider);
+
+    userData.studyScheduleRef().snapshots().listen((snapshot) {
+      state = snapshot.docs.map((doc) {
+        return StudySchedule(
+          id: doc.id,
+          subjectId: doc['subjectId'],
+          day: WeekDay.values[doc['day']],
+          minutes: doc['minutes'],
+          isCompleted: doc['isCompleted'],
+        );
+      }).toList();
+    });
   }
 
-  void removeSchedule(String scheduleId) {
-    _box.delete(scheduleId);
-    state = _box.values.toList();
+  Future<void> addSchedule(StudySchedule schedule) async {
+    final userData = ref.read(userDataServiceProvider);
+
+    await userData.studyScheduleRef().doc(schedule.id).set({
+      'subjectId': schedule.subjectId,
+      'day': schedule.day.index,
+      'minutes': schedule.minutes,
+      'isCompleted': false,
+    });
   }
 
-  void clearSchedules() {
-    _box.clear();
-    state = [];
+  Future<void> removeSchedule(String id) async {
+    final userData = ref.read(userDataServiceProvider);
+    await userData.studyScheduleRef().doc(id).delete();
   }
 
-  void markCompleted(String scheduleId) {
-    state = state.map((s) {
-      if (s.id == scheduleId) {
-        final updated = s.copyWith(isCompleted: true);
-        Hive.box<StudySchedule>('schedules').put(scheduleId, updated);
-        return updated;
-      }
-      return s;
-    }).toList();
+  Future<void> clearSchedules() async {
+    final userData = ref.read(userDataServiceProvider);
+
+    final schedules = await userData.studyScheduleRef().get();
+    for (final doc in schedules.docs) {
+      await doc.reference.delete();
+    }
+
+    final sessions = await userData.sessionRef().get();
+    for (final doc in sessions.docs) {
+      await doc.reference.delete();
+    }
+  }
+
+  Future<void> markCompleted(String id) async {
+    final userData = ref.read(userDataServiceProvider);
+    await userData.studyScheduleRef().doc(id).update({'isCompleted': true});
   }
 }
 
 final studyScheduleProvider =
-    NotifierProvider<Studyscheduleviewmodel, List<StudySchedule>>(
-      Studyscheduleviewmodel.new,
+    NotifierProvider<StudyScheduleViewModel, List<StudySchedule>>(
+      StudyScheduleViewModel.new,
     );

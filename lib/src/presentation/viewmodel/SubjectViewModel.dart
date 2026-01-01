@@ -1,59 +1,69 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:smart_study/src/data/model/Subject.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
+import 'package:smart_study/src/data/services/user_data_services.dart';
+import 'package:smart_study/src/presentation/viewmodel/auth_provide.dart';
 
-class Subjectviewmodel extends Notifier<List<Subject>> {
-  final _box = Hive.box<Subject>('subjects');
+class SubjectViewModel extends Notifier<List<Subject>> {
   @override
   List<Subject> build() {
-    // Initial list of subjects
-    return _box.values.toList();
+    _listen();
+    return [];
   }
 
-  void addSubject(Subject subject) {
-    _box.put(subject.id, subject);
-    state = _box.values.toList();
+  void _listen() {
+    final userData = ref.read(userDataServiceProvider);
+
+    userData.subjectRef().snapshots().listen((snapshot) {
+      state = snapshot.docs.map((doc) {
+        return Subject(id: doc.id, name: doc['name']);
+      }).toList();
+    });
   }
 
-  void removeSubject(String id) {
-    _box.delete(id);
+  Future<void> addSubject(Subject subject) async {
+    final userData = ref.read(userDataServiceProvider);
 
-    final scheduleBox = Hive.box<StudySchedule>('schedules');
-    final toDelete = scheduleBox.values
-        .where((s) => s.subjectId == id)
-        .map((s) => s.id)
-        .toList();
+    await userData.subjectRef().doc(subject.id).set({'name': subject.name});
+  }
 
-    for (final sid in toDelete) {
-      scheduleBox.delete(sid);
+  Future<void> removeSubject(String id) async {
+    final userData = ref.read(userDataServiceProvider);
+
+    await userData.subjectRef().doc(id).delete();
+
+    // delete related schedules
+    final schedules = await userData
+        .studyScheduleRef()
+        .where('subjectId', isEqualTo: id)
+        .get();
+
+    for (final doc in schedules.docs) {
+      await doc.reference.delete();
+    }
+  }
+
+  Future<void> clearSubjects() async {
+    final userData = ref.read(userDataServiceProvider);
+
+    final subjects = await userData.subjectRef().get();
+    for (final doc in subjects.docs) {
+      await doc.reference.delete();
     }
 
-    state = _box.values.toList();
-  }
+    final schedules = await userData.studyScheduleRef().get();
+    for (final doc in schedules.docs) {
+      await doc.reference.delete();
+    }
 
-  void clearSubjects() {
-    _box.clear();
-    state = [];
-  }
-
-  void markAsCompleted(String id) {
-    state = state
-        .map(
-          (subject) => subject.id == id
-              ? Subject(
-                  id: subject.id,
-                  name: subject.name,
-                  //time: subject.time,
-                  //isCompleted: true,
-                )
-              : subject,
-        )
-        .toList();
+    final sessions = await userData.sessionRef().get();
+    for (final doc in sessions.docs) {
+      await doc.reference.delete();
+    }
   }
 }
 
 final subjectViewModelProvider =
-    NotifierProvider<Subjectviewmodel, List<Subject>>(() {
-      return Subjectviewmodel();
-    });
+    NotifierProvider<SubjectViewModel, List<Subject>>(SubjectViewModel.new);

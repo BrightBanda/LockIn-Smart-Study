@@ -11,4 +11,9 @@ class Subject {
   final String name;
 
   Subject({required this.id, required this.name});
+
+  Map<String, dynamic> toMap() => {'id': id, 'name': name};
+
+  factory Subject.fromMap(Map<String, dynamic> map) =>
+      Subject(id: map['id'], name: map['name']);
 }
