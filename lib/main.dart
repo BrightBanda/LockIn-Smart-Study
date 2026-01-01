@@ -2,17 +2,19 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:smart_study/firebase_options.dart';
 import 'package:smart_study/src/data/model/Subject.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/data/model/studySession.dart';
-import 'package:smart_study/src/presentation/view/home_page.dart';
+import 'package:smart_study/src/presentation/view/auth_gate.dart';
+import 'package:smart_study/src/presentation/view/history_page.dart';
 import 'package:smart_study/src/presentation/view/subjects_page.dart';
 import 'package:smart_study/src/presentation/viewmodel/themeManagerViewmodel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   Hive.registerAdapter(SubjectAdapter());
   Hive.registerAdapter(StudysessionAdapter());
@@ -41,7 +43,7 @@ class MyApp extends ConsumerWidget {
       darkTheme: ThemeData.dark(),
       themeMode: themeNotifier,
 
-      home: const Homepage(),
+      home: const AuthGate(),
 
       initialRoute: '/',
       routes: {'/subjects': (context) => const SubjectsPage()},

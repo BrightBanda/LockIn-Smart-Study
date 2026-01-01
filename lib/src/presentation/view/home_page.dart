@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_study/src/data/model/Subject.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/presentation/viewmodel/SubjectViewModel.dart';
+import 'package:smart_study/src/presentation/viewmodel/auth_provide.dart';
 import 'package:smart_study/src/presentation/viewmodel/selectedDayViewModel.dart';
 import 'package:smart_study/src/presentation/viewmodel/studyScheduleViewModel.dart';
 import 'package:smart_study/src/presentation/viewmodel/themeManagerViewmodel.dart';
 import 'package:smart_study/src/utils/SubjectCard.dart';
 import 'package:smart_study/src/utils/addScheduleDialog.dart';
-import 'package:smart_study/src/utils/clearDataDialog.dart';
 import 'package:smart_study/src/utils/dayofWeekButton.dart';
 
 class Homepage extends ConsumerWidget {
@@ -81,7 +81,7 @@ class Homepage extends ConsumerWidget {
               },
             ),
             ListTile(
-              leading: Icon(Icons.settings_outlined),
+              leading: Icon(Icons.line_axis_outlined),
               title: Text('Stats'),
               onTap: () {
                 Navigator.pop(context);
@@ -89,27 +89,34 @@ class Homepage extends ConsumerWidget {
             ),
 
             ListTile(
-              leading: Icon(Icons.settings_outlined),
+              leading: Icon(Icons.history),
               title: Text('History'),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              leading: Icon(Icons.settings_outlined),
+              leading: Icon(Icons.person_2_outlined),
               title: Text('Profile'),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              leading: Icon(Icons.message_outlined),
-              title: Text('About'),
-              onTap: () {
-                Navigator.pop(context);
+              leading: Icon(Icons.logout_outlined),
+              title: Text('Logout'),
+              onTap: () async {
+                Navigator.pop(context); // close the drawer first
+                try {
+                  await ref.read(googleAuthServiceProvider).signOut();
+                } catch (e) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Logout failed: $e')));
+                }
               },
             ),
-            ClearDataDialog(),
+            //ClearDataDialog(),
           ],
         ),
       ),
