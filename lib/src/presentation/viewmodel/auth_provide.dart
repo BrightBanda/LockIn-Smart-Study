@@ -29,3 +29,7 @@ final userDataServiceProvider = Provider<UserDataServices>((ref) {
     error: (_, __) => throw Exception('Auth error'),
   );
 });
+
+final currentUserProvider = Provider<User?>((ref) {
+  return ref.watch(authStateProvider).value;
+});

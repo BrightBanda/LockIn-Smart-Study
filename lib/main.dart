@@ -7,6 +7,7 @@ import 'package:smart_study/src/data/model/Subject.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/data/model/studySession.dart';
 import 'package:smart_study/src/presentation/view/auth_gate.dart';
+import 'package:smart_study/src/presentation/view/profile_page.dart';
 import 'package:smart_study/src/presentation/view/subjects_page.dart';
 import 'package:smart_study/src/presentation/viewmodel/themeManagerViewmodel.dart';
 
@@ -45,7 +46,10 @@ class MyApp extends ConsumerWidget {
       home: const AuthGate(),
 
       initialRoute: '/',
-      routes: {'/subjects': (context) => const SubjectsPage()},
+      routes: {
+        '/subjects': (context) => const SubjectsPage(),
+        '/profile': (context) => const ProfilePage(),
+      },
     );
   }
 }

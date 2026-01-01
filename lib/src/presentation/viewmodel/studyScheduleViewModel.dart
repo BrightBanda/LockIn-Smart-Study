@@ -1,28 +1,51 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
+import 'package:smart_study/src/data/services/user_data_services.dart';
 import 'package:smart_study/src/presentation/viewmodel/auth_provide.dart';
 
 class StudyScheduleViewModel extends Notifier<List<StudySchedule>> {
+  StreamSubscription? _subscription;
+
   @override
   List<StudySchedule> build() {
-    _listen();
+    final authAsync = ref.watch(authStateProvider);
+
+    authAsync.whenData((user) {
+      // Cancel previous subscription if any
+      _subscription?.cancel();
+
+      if (user == null) {
+        state = [];
+        return;
+      }
+
+      final userData = UserDataServices(uid: user.uid);
+
+      // Listen to Firestore schedules for this user
+      _subscription = userData.studyScheduleRef().snapshots().listen((
+        snapshot,
+      ) {
+        state = snapshot.docs.map((doc) {
+          return StudySchedule(
+            id: doc.id,
+            subjectId: doc['subjectId'],
+            day: WeekDay.values[doc['day']],
+            minutes: doc['minutes'],
+            isCompleted: doc['isCompleted'],
+          );
+        }).toList();
+      });
+    });
+
+    // Initial empty state
     return [];
   }
 
-  void _listen() {
-    final userData = ref.read(userDataServiceProvider);
-
-    userData.studyScheduleRef().snapshots().listen((snapshot) {
-      state = snapshot.docs.map((doc) {
-        return StudySchedule(
-          id: doc.id,
-          subjectId: doc['subjectId'],
-          day: WeekDay.values[doc['day']],
-          minutes: doc['minutes'],
-          isCompleted: doc['isCompleted'],
-        );
-      }).toList();
-    });
+  @override
+  void dispose() {
+    _subscription?.cancel();
   }
 
   Future<void> addSchedule(StudySchedule schedule) async {

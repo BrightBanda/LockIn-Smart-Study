@@ -9,8 +9,18 @@ import 'package:smart_study/src/presentation/viewmodel/auth_provide.dart';
 class SubjectViewModel extends Notifier<List<Subject>> {
   @override
   List<Subject> build() {
-    _listen();
-    return [];
+    final auth = ref.watch(authStateProvider);
+
+    return auth.when(
+      data: (user) {
+        if (user == null) return [];
+
+        _listen();
+        return state;
+      },
+      loading: () => [],
+      error: (_, __) => [],
+    );
   }
 
   void _listen() {
