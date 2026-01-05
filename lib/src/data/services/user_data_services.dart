@@ -10,7 +10,7 @@ class UserDataServices {
       _firestore.collection('users').doc(uid).collection('subjects');
 
   CollectionReference<Map<String, dynamic>> studyScheduleRef() =>
-      _firestore.collection('users').doc(uid).collection('schedues');
+      _firestore.collection('users').doc(uid).collection('schedules');
 
   CollectionReference<Map<String, dynamic>> sessionRef() =>
       _firestore.collection('users').doc(uid).collection('sessions');

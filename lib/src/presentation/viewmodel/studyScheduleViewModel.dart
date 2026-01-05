@@ -21,7 +21,7 @@ class StudyScheduleViewModel extends Notifier<List<StudySchedule>> {
         return;
       }
 
-      final userData = UserDataServices(uid: user.uid);
+      final userData = ref.read(userDataServiceProvider);
 
       // Listen to Firestore schedules for this user
       _subscription = userData.studyScheduleRef().snapshots().listen((
