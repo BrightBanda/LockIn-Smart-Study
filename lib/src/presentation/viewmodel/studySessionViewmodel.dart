@@ -80,7 +80,6 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
       if (current == null || !current.isRunning) return;
 
       final next = current.remainingSeconds - 1;
-      print('TICK for $id → remaining: $next');
 
       if (next <= 0) {
         _timers[id]?.cancel();

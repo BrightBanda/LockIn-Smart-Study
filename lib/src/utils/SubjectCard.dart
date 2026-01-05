@@ -46,7 +46,7 @@ class Subjectcard extends ConsumerWidget {
       ),
       child: Card(
         color: isCompleted
-            ? Theme.of(context).primaryColorDark
+            ? Colors.lightGreenAccent[100]
             : isRunning
             ? Theme.of(context).primaryColorLight
             : Theme.of(context).cardTheme.color,
@@ -65,9 +65,17 @@ class Subjectcard extends ConsumerWidget {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
                   ),
-                  Text(_formatTime(remainingSeconds)),
+                  Text(
+                    _formatTime(remainingSeconds),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
                 ],
               ),
 
@@ -82,7 +90,10 @@ class Subjectcard extends ConsumerWidget {
               ),
 
               const SizedBox(height: 6),
-              Text("${(progress * 100).round()}%"),
+              Text(
+                "${(progress * 100).round()}%",
+                style: const TextStyle(color: Colors.black87),
+              ),
 
               const SizedBox(height: 12),
 
