@@ -107,7 +107,7 @@ class Homepage extends ConsumerWidget {
               leading: Icon(Icons.logout_outlined),
               title: Text('Logout'),
               onTap: () async {
-                Navigator.pop(context); // close the drawer first
+                Navigator.pop(context);
                 try {
                   await ref.read(googleAuthServiceProvider).signOut();
                 } catch (e) {

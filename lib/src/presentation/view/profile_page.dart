@@ -16,7 +16,23 @@ class ProfilePage extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(
+        title: const Text('Profile'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              try {
+                await ref.read(googleAuthServiceProvider).signOut();
+              } catch (e) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('Logout failed: $e')));
+              }
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: ListView(
           children: [
@@ -26,6 +42,7 @@ class ProfilePage extends ConsumerWidget {
                   : null,
               displayName: user.displayName,
               email: user.email,
+              streak: "Streak: 🔥15 days",
             ),
             ProfileOverview(),
             ListTile(

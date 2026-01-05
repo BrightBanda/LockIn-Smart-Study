@@ -4,11 +4,13 @@ class ProfileHead extends StatelessWidget {
   final ImageProvider<Object>? backgroundImage;
   final String? displayName;
   final String? email;
+  final String? streak;
   const ProfileHead({
     super.key,
     required this.backgroundImage,
     required this.displayName,
     required this.email,
+    required this.streak,
   });
 
   @override
@@ -33,8 +35,20 @@ class ProfileHead extends StatelessWidget {
 
             const SizedBox(height: 8),
 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.email, size: 16, color: Colors.grey),
+                const SizedBox(width: 2),
+                Text(
+                  email ?? 'No email',
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ],
+            ),
+            const SizedBox(height: 2),
             Text(
-              email ?? 'No email',
+              streak ?? 'No streak',
               style: const TextStyle(color: Colors.grey),
             ),
           ],

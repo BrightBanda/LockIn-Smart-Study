@@ -7,7 +7,7 @@ class ProfileOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: 350,
       child: Card(
         margin: const EdgeInsets.all(16),
         elevation: 4,
