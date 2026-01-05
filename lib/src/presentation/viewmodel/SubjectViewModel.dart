@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
@@ -7,35 +9,39 @@ import 'package:smart_study/src/data/services/user_data_services.dart';
 import 'package:smart_study/src/presentation/viewmodel/auth_provide.dart';
 
 class SubjectViewModel extends Notifier<List<Subject>> {
+  StreamSubscription? _subscription;
+
   @override
   List<Subject> build() {
     final auth = ref.watch(authStateProvider);
 
-    return auth.when(
-      data: (user) {
-        if (user == null) return [];
+    auth.whenData((user) {
+      _subscription?.cancel();
 
-        _listen();
-        return state;
-      },
-      loading: () => [],
-      error: (_, __) => [],
-    );
-  }
+      if (user == null) {
+        state = [];
+        return;
+      }
 
-  void _listen() {
-    final userData = ref.read(userDataServiceProvider);
+      final userData = ref.read(userDataServiceProvider);
 
-    userData.subjectRef().snapshots().listen((snapshot) {
-      state = snapshot.docs.map((doc) {
-        return Subject(id: doc.id, name: doc['name']);
-      }).toList();
+      _subscription = userData.subjectRef().snapshots().listen((snapshot) {
+        state = snapshot.docs
+            .map((doc) => Subject(id: doc.id, name: doc['name']))
+            .toList();
+      });
     });
+
+    // ✅ initial state ONLY
+    ref.onDispose(() {
+      _subscription?.cancel();
+    });
+
+    return [];
   }
 
   Future<void> addSubject(Subject subject) async {
     final userData = ref.read(userDataServiceProvider);
-
     await userData.subjectRef().doc(subject.id).set({'name': subject.name});
   }
 
@@ -44,7 +50,6 @@ class SubjectViewModel extends Notifier<List<Subject>> {
 
     await userData.subjectRef().doc(id).delete();
 
-    // delete related schedules
     final schedules = await userData
         .studyScheduleRef()
         .where('subjectId', isEqualTo: id)
