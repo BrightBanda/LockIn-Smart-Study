@@ -65,7 +65,6 @@ class Subjectcard extends ConsumerWidget {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
                     ),
                   ),
                   Text(
@@ -73,7 +72,6 @@ class Subjectcard extends ConsumerWidget {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
                     ),
                   ),
                 ],
@@ -90,10 +88,7 @@ class Subjectcard extends ConsumerWidget {
               ),
 
               const SizedBox(height: 6),
-              Text(
-                "${(progress * 100).round()}%",
-                style: const TextStyle(color: Colors.black87),
-              ),
+              Text("${(progress * 100).round()}%"),
 
               const SizedBox(height: 12),
 

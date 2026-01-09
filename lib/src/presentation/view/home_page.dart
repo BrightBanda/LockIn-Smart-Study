@@ -6,6 +6,7 @@ import 'package:smart_study/src/presentation/viewmodel/SubjectViewModel.dart';
 import 'package:smart_study/src/presentation/viewmodel/auth_provide.dart';
 import 'package:smart_study/src/presentation/viewmodel/selectedDayViewModel.dart';
 import 'package:smart_study/src/presentation/viewmodel/studyScheduleViewModel.dart';
+import 'package:smart_study/src/presentation/viewmodel/studySessionViewmodel.dart';
 import 'package:smart_study/src/presentation/viewmodel/themeManagerViewmodel.dart';
 import 'package:smart_study/src/utils/SubjectCard.dart';
 import 'package:smart_study/src/utils/addScheduleDialog.dart';
@@ -22,6 +23,7 @@ class Homepage extends ConsumerWidget {
     final selectedDay = ref.watch(selectedDayProvider);
     final subjects = ref.watch(subjectViewModelProvider);
     final scheduleProvider = ref.read(studyScheduleProvider.notifier);
+    final sessionProvider = ref.read(studySessionProvider.notifier);
 
     final todaySchedule = schedules.where((s) => s.day == selectedDay).toList();
     return Scaffold(

@@ -59,19 +59,17 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
     final userData = ref.read(userDataServiceProvider);
     final id = schedule.id;
 
-    // initialize session
-    state = {
-      ...state,
-      id: Studysession(
-        remainingSeconds: schedule.minutes * 60,
-        isRunning: true,
-      ),
-    };
+    final current = state[id];
 
-    await userData.sessionRef().doc(id).set({
-      'remainingSeconds': schedule.minutes * 60,
-      'isRunning': true,
-    });
+    // 🛑 guard clauses
+    if (current == null) return;
+    if (current.isRunning) return;
+    if (current.remainingSeconds <= 0) return;
+
+    // ✅ ONLY mark as running
+    state = {...state, id: current.copyWith(isRunning: true)};
+
+    await userData.sessionRef().doc(id).update({'isRunning': true});
 
     _timers[id]?.cancel();
 
@@ -98,10 +96,8 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
         return;
       }
 
-      // update LOCAL state every second
       state = {...state, id: current.copyWith(remainingSeconds: next)};
 
-      // update Firestore occasionally (or every second if you want)
       await userData.sessionRef().doc(id).update({'remainingSeconds': next});
     });
   }
