@@ -62,7 +62,15 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
     final current = state[id];
 
     // 🛑 guard clauses
-    if (current == null) return;
+    if (current == null) {
+      // Initialize session if it doesn't exist
+      final totalSeconds = schedule.minutes * 60;
+      await userData.sessionRef().doc(id).set({
+        'remainingSeconds': totalSeconds,
+        'isRunning': false,
+      });
+      return;
+    }
     if (current.isRunning) return;
     if (current.remainingSeconds <= 0) return;
 

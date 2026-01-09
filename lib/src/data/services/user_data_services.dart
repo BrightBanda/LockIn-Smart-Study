@@ -14,4 +14,10 @@ class UserDataServices {
 
   CollectionReference<Map<String, dynamic>> sessionRef() =>
       _firestore.collection('users').doc(uid).collection('sessions');
+
+  CollectionReference<Map<String, dynamic>> dayRef() =>
+      _firestore.collection('users').doc(uid).collection('days');
+
+  CollectionReference<Map<String, dynamic>> weekRef() =>
+      _firestore.collection('users').doc(uid).collection('weeks');
 }

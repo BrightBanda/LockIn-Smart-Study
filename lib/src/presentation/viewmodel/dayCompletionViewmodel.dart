@@ -1,0 +1,18 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_study/src/data/model/studySchedule.dart';
+import 'package:smart_study/src/presentation/viewmodel/auth_provide.dart';
+
+final completedDaysProvider = StreamProvider<Set<WeekDay>>((ref) {
+  final userData = ref.read(userDataServiceProvider);
+
+  return userData.dayRef().snapshots().map((snapshot) {
+    final completed = <WeekDay>{};
+
+    for (final doc in snapshot.docs) {
+      if (doc['isCompleted'] == true) {
+        completed.add(WeekDay.values[doc['day']]);
+      }
+    }
+    return completed;
+  });
+});

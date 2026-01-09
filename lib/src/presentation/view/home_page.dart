@@ -83,8 +83,16 @@ class Homepage extends ConsumerWidget {
               },
             ),
             ListTile(
+              leading: Icon(Icons.style_outlined),
+              title: Text('FlashCards (coming soon)'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+
+            ListTile(
               leading: Icon(Icons.line_axis_outlined),
-              title: Text('Stats'),
+              title: Text('Stats (coming soon)'),
               onTap: () {
                 Navigator.pop(context);
               },
@@ -92,14 +100,14 @@ class Homepage extends ConsumerWidget {
 
             ListTile(
               leading: Icon(Icons.history),
-              title: Text('History'),
+              title: Text('History (coming soon)'),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
               leading: Icon(Icons.person_2_outlined),
-              title: Text('Profile'),
+              title: Text('Profile (coming soon)'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/profile');

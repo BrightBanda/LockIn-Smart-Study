@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/data/services/user_data_services.dart';
 import 'package:smart_study/src/presentation/viewmodel/auth_provide.dart';
+import 'package:smart_study/src/utils/helpers/date_helper.dart';
 
 class StudyScheduleViewModel extends Notifier<List<StudySchedule>> {
   StreamSubscription? _subscription;
@@ -80,7 +81,38 @@ class StudyScheduleViewModel extends Notifier<List<StudySchedule>> {
 
   Future<void> markCompleted(String id) async {
     final userData = ref.read(userDataServiceProvider);
+
     await userData.studyScheduleRef().doc(id).update({'isCompleted': true});
+
+    final completedSchedule = state.firstWhere((s) => s.id == id);
+    final day = completedSchedule.day;
+
+    final dayCompleted = areAllSchedulesCompletedForDay(day);
+
+    if (dayCompleted) {
+      await userData.dayRef().doc(todayId()).set({
+        'day': day.index,
+        'isCompleted': true,
+        'completedAt': DateTime.now(),
+      });
+    }
+
+    final allCompleted = state.isNotEmpty && state.every((s) => s.isCompleted);
+
+    if (allCompleted) {
+      await userData.weekRef().doc(currentWeekId()).set({
+        'isCompleted': true,
+        'completedAt': DateTime.now(),
+      });
+    }
+  }
+
+  bool areAllSchedulesCompletedForDay(WeekDay day) {
+    final schedulesForDay = state
+        .where((schedule) => schedule.day == day)
+        .toList();
+    if (schedulesForDay.isEmpty) return false;
+    return schedulesForDay.every((schedule) => schedule.isCompleted);
   }
 }
 
