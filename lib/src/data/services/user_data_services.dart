@@ -20,4 +20,10 @@ class UserDataServices {
 
   CollectionReference<Map<String, dynamic>> weekRef() =>
       _firestore.collection('users').doc(uid).collection('weeks');
+
+  DocumentReference<Map<String, dynamic>> streakRef() => _firestore
+      .collection('users')
+      .doc(uid)
+      .collection('Progress')
+      .doc('Streak');
 }

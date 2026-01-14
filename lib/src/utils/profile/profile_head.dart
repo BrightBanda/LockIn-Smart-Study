@@ -4,7 +4,7 @@ class ProfileHead extends StatelessWidget {
   final ImageProvider<Object>? backgroundImage;
   final String? displayName;
   final String? email;
-  final String? streak;
+  final Widget? streak;
   const ProfileHead({
     super.key,
     required this.backgroundImage,
@@ -47,10 +47,7 @@ class ProfileHead extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 2),
-            Text(
-              streak ?? 'No streak',
-              style: const TextStyle(color: Colors.grey),
-            ),
+            if (streak != null) streak!,
           ],
         ),
       ),

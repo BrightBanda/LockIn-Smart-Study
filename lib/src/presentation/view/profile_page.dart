@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_study/src/presentation/view/login_page.dart';
 import 'package:smart_study/src/presentation/viewmodel/auth_provide.dart';
+import 'package:smart_study/src/presentation/viewmodel/streakViewmodel.dart';
 import 'package:smart_study/src/utils/profile/profile_head.dart';
 import 'package:smart_study/src/utils/profile/profile_overview.dart';
 
@@ -11,8 +13,11 @@ class ProfilePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
 
+    final streak = ref.watch(streakProvider);
+
     if (user == null) {
-      return const Scaffold(body: Center(child: Text('Not logged in')));
+      //Navigator.pushNamed(context, '/loginPage');
+      return LoginPage();
     }
 
     return Scaffold(
@@ -43,7 +48,23 @@ class ProfilePage extends ConsumerWidget {
                   : null,
               displayName: user.displayName,
               email: user.email,
-              streak: "Streak: 🔥15 days",
+              streak: Consumer(
+                builder: (context, ref, _) {
+                  final streakAsync = ref.watch(streakProvider);
+
+                  return streakAsync.when(
+                    loading: () => const Text('🔥 ...'),
+                    error: (_, __) => const Text('🔥 0'),
+                    data: (streak) => Text(
+                      '🔥 ${streak.current} day streak',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
             ProfileOverview(),
             ListTile(
