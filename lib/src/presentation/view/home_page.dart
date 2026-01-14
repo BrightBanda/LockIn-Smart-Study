@@ -29,7 +29,7 @@ class Homepage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Smart Study 🧠",
+          "LockIN 🔐",
           style: TextStyle(
             color: Theme.of(context).textTheme.bodyMedium?.color,
             fontSize: 30,

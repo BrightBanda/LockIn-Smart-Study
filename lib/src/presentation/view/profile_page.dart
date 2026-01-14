@@ -24,6 +24,7 @@ class ProfilePage extends ConsumerWidget {
             onPressed: () async {
               try {
                 await ref.read(googleAuthServiceProvider).signOut();
+                //await Navigator.pushNamed(context, "/loginPage");
               } catch (e) {
                 ScaffoldMessenger.of(
                   context,

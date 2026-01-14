@@ -46,11 +46,11 @@ class Dayofweekbutton extends ConsumerWidget {
     Color backgroundColor;
     Color foregroundColor;
 
-    if (isSelected) {
+    if (isSelected && isCompleted) {
       backgroundColor = Colors.black;
-      foregroundColor = Colors.white;
-    } else if (isSelected && isCompleted) {
-      backgroundColor = Colors.green;
+      foregroundColor = Colors.greenAccent;
+    } else if (isSelected) {
+      backgroundColor = Colors.black;
       foregroundColor = Colors.white;
     } else if (isCompleted) {
       backgroundColor = Colors.green;

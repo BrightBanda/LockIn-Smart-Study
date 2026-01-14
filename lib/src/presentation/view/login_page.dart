@@ -142,7 +142,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
                       // Tagline
                       Text(
-                        'Learn smarter, not harder',
+                        'Study smarter, not harder',
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 16,
