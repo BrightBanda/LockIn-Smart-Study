@@ -153,6 +153,10 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
       'remainingSeconds': schedule.minutes * 60,
       'isRunning': false,
     });
+
+    await userData.studyScheduleRef().doc(schedule.id).update({
+      'isCompleted': false,
+    });
   }
 }
 
