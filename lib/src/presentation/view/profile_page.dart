@@ -5,6 +5,7 @@ import 'package:smart_study/src/presentation/viewmodel/auth_provide.dart';
 import 'package:smart_study/src/presentation/viewmodel/streakViewmodel.dart';
 import 'package:smart_study/src/utils/profile/profile_head.dart';
 import 'package:smart_study/src/utils/profile/profile_overview.dart';
+import 'package:smart_study/src/utils/resetButton.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -29,7 +30,6 @@ class ProfilePage extends ConsumerWidget {
             onPressed: () async {
               try {
                 await ref.read(googleAuthServiceProvider).signOut();
-                //await Navigator.pushNamed(context, "/loginPage");
               } catch (e) {
                 ScaffoldMessenger.of(
                   context,
@@ -37,6 +37,7 @@ class ProfilePage extends ConsumerWidget {
               }
             },
           ),
+          ResetButton(),
         ],
       ),
       body: SafeArea(

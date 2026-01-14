@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_study/src/utils/resetButton.dart';
 
 class ProfileHead extends StatelessWidget {
   final ImageProvider<Object>? backgroundImage;
@@ -16,7 +17,7 @@ class ProfileHead extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: 330,
       width: double.maxFinite,
       child: Card(
         margin: const EdgeInsets.all(16),
@@ -48,6 +49,8 @@ class ProfileHead extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             if (streak != null) streak!,
+
+            const SizedBox(height: 2),
           ],
         ),
       ),

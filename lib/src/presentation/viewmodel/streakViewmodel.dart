@@ -52,6 +52,14 @@ class StreakNotifier extends Notifier<AsyncValue<Streak>> {
 
     await ref.read(userDataServiceProvider).streakRef().set(updated.toMap());
   }
+
+  Future<void> resetStreak() async {
+    final reset = Streak(current: 0, lastCompletedDay: '');
+
+    state = AsyncValue.data(reset);
+
+    await ref.read(userDataServiceProvider).streakRef().set(reset.toMap());
+  }
 }
 
 final streakProvider = NotifierProvider<StreakNotifier, AsyncValue<Streak>>(

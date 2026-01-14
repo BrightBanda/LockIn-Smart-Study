@@ -7,6 +7,17 @@ import 'package:smart_study/src/utils/helpers/date_helper.dart';
 final completedDaysProvider = StreamProvider<Set<WeekDay>>((ref) {
   final userData = ref.read(userDataServiceProvider);
 
+  Future<void> resetProgress() async {
+    final snapshot = await userData
+        .dayRef()
+        .where('weekId', isEqualTo: currentWeekId())
+        .get();
+
+    for (final doc in snapshot.docs) {
+      await doc.reference.update({'isCompleted': false});
+    }
+  }
+
   return userData.dayRef().snapshots().map((snapshot) {
     final completed = <WeekDay>{};
 
