@@ -90,9 +90,10 @@ class StudyScheduleViewModel extends Notifier<List<StudySchedule>> {
     final dayCompleted = areAllSchedulesCompletedForDay(day);
 
     if (dayCompleted) {
-      await userData.dayRef().doc(todayId()).set({
+      await userData.dayRef().doc(dayCompletionId(day)).set({
         'day': day.index,
         'isCompleted': true,
+        'weekId': currentWeekId(),
         'completedAt': DateTime.now(),
       });
     }

@@ -61,53 +61,34 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
 
     final current = state[id];
 
-    // 🛑 guard clauses
+    // 🟢 CASE 1: session does NOT exist yet → create it
     if (current == null) {
-      // Initialize session if it doesn't exist
-      final totalSeconds = schedule.minutes * 60;
+      final newSession = Studysession(
+        remainingSeconds: schedule.minutes * 60,
+        isRunning: true,
+      );
+
+      state = {...state, id: newSession};
+
       await userData.sessionRef().doc(id).set({
-        'remainingSeconds': totalSeconds,
-        'isRunning': false,
+        'remainingSeconds': newSession.remainingSeconds,
+        'isRunning': true,
       });
+
+      _startTimer(id);
       return;
     }
+
+    // 🟡 CASE 2: already running → do nothing
     if (current.isRunning) return;
+
+    // 🔵 CASE 3: paused → resume
     if (current.remainingSeconds <= 0) return;
 
-    // ✅ ONLY mark as running
     state = {...state, id: current.copyWith(isRunning: true)};
-
     await userData.sessionRef().doc(id).update({'isRunning': true});
 
-    _timers[id]?.cancel();
-
-    _timers[id] = Timer.periodic(const Duration(seconds: 1), (_) async {
-      final current = state[id];
-      if (current == null || !current.isRunning) return;
-
-      final next = current.remainingSeconds - 1;
-
-      if (next <= 0) {
-        _timers[id]?.cancel();
-
-        state = {
-          ...state,
-          id: current.copyWith(remainingSeconds: 0, isRunning: false),
-        };
-
-        await userData.sessionRef().doc(id).update({
-          'remainingSeconds': 0,
-          'isRunning': false,
-        });
-
-        ref.read(studyScheduleProvider.notifier).markCompleted(id);
-        return;
-      }
-
-      state = {...state, id: current.copyWith(remainingSeconds: next)};
-
-      await userData.sessionRef().doc(id).update({'remainingSeconds': next});
-    });
+    _startTimer(id);
   }
 
   Future<void> stopSession(String id) async {
@@ -129,6 +110,40 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
       timer.cancel();
     }
     _timers.clear();
+  }
+
+  void _startTimer(String id) {
+    _timers[id]?.cancel();
+
+    _timers[id] = Timer.periodic(const Duration(seconds: 1), (_) async {
+      final current = state[id];
+      if (current == null || !current.isRunning) return;
+
+      final next = current.remainingSeconds - 1;
+
+      if (next <= 0) {
+        _timers[id]?.cancel();
+
+        state = {
+          ...state,
+          id: current.copyWith(remainingSeconds: 0, isRunning: false),
+        };
+
+        final userData = ref.read(userDataServiceProvider);
+        await userData.sessionRef().doc(id).update({
+          'remainingSeconds': 0,
+          'isRunning': false,
+        });
+
+        ref.read(studyScheduleProvider.notifier).markCompleted(id);
+        return;
+      }
+
+      state = {...state, id: current.copyWith(remainingSeconds: next)};
+
+      final userData = ref.read(userDataServiceProvider);
+      await userData.sessionRef().doc(id).update({'remainingSeconds': next});
+    });
   }
 
   Future<void> resetSession(StudySchedule schedule) async {
