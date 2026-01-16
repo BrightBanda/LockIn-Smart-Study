@@ -95,6 +95,7 @@ class Homepage extends ConsumerWidget {
               title: Text('Stats (coming soon)'),
               onTap: () {
                 Navigator.pop(context);
+                Navigator.pushNamed(context, '/statsPage');
               },
             ),
 

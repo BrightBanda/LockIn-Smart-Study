@@ -9,6 +9,7 @@ import 'package:smart_study/src/data/model/studySession.dart';
 import 'package:smart_study/src/presentation/view/auth_gate.dart';
 import 'package:smart_study/src/presentation/view/login_page.dart';
 import 'package:smart_study/src/presentation/view/profile_page.dart';
+import 'package:smart_study/src/presentation/view/stats_page.dart';
 import 'package:smart_study/src/presentation/view/subjects_page.dart';
 import 'package:smart_study/src/presentation/viewmodel/themeManagerViewmodel.dart';
 
@@ -51,6 +52,7 @@ class MyApp extends ConsumerWidget {
         '/subjects': (context) => const SubjectsPage(),
         '/profile': (context) => const ProfilePage(),
         '/loginPage': (context) => const LoginPage(),
+        '/statsPage': (context) => const StatsPage(),
       },
     );
   }

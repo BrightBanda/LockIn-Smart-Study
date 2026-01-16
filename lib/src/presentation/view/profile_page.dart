@@ -13,7 +13,6 @@ class ProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
-
     final streak = ref.watch(streakProvider);
 
     if (user == null) {
