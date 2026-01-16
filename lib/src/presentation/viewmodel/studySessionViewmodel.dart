@@ -158,6 +158,28 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
       'isCompleted': false,
     });
   }
+
+  Future<void> resetAllSessions() async {
+    final userData = ref.read(userDataServiceProvider);
+
+    _clearTimers();
+
+    final scheduleSnapShot = await userData.studyScheduleRef().get();
+    for (final doc in scheduleSnapShot.docs) {
+      {
+        final schedule = StudySchedule.fromMap(doc.data(), doc.id);
+
+        await userData.sessionRef().doc(schedule.id).set({
+          'remainingSeconds': schedule.minutes * 60,
+          'isRunning': false,
+        });
+        await userData.studyScheduleRef().doc(schedule.id).update({
+          'isCompleted': false,
+        });
+      }
+      state = {};
+    }
+  }
 }
 
 final studySessionProvider =

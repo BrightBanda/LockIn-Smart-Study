@@ -58,15 +58,17 @@ class StudySchedule {
   Map<String, dynamic> toMap() => {
     'id': id,
     'subjectId': subjectId,
-    'day': day,
+    'day': day.index,
     'minutes': minutes,
     'isComplete': isCompleted,
   };
 
-  factory StudySchedule.fromMap(Map<String, dynamic> map) => StudySchedule(
-    id: map['id'],
-    subjectId: map['subjectId'],
-    day: map['day'],
-    minutes: map['minutes'],
-  );
+  factory StudySchedule.fromMap(Map<String, dynamic> map, String id) =>
+      StudySchedule(
+        id: id,
+        subjectId: map['subjectId'],
+        day: WeekDay.values[map['day'] as int],
+        minutes: map['minutes'] as int,
+        isCompleted: map['isComplete'] ?? false,
+      );
 }

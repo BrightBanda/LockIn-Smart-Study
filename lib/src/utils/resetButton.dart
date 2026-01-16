@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_study/src/presentation/viewmodel/completedDayNotifier.dart';
 import 'package:smart_study/src/presentation/viewmodel/streakViewmodel.dart';
+import 'package:smart_study/src/presentation/viewmodel/studySessionViewmodel.dart';
 
 class ResetButton extends ConsumerWidget {
   const ResetButton({super.key});
@@ -13,6 +14,11 @@ class ResetButton extends ConsumerWidget {
       icon: const Icon(Icons.restart_alt, color: Colors.red),
       tooltip: 'Reset Progress',
       onPressed: () async {
+        final completedDaysNotifier = ref.read(
+          completedDaysProviderNot.notifier,
+        );
+        final streakNotifier = ref.read(streakProvider.notifier);
+        final studySessionNotifier = ref.read(studySessionProvider.notifier);
         final confirmed = await showDialog<bool>(
           context: context,
           builder: (_) => AlertDialog(
@@ -36,8 +42,9 @@ class ResetButton extends ConsumerWidget {
         if (confirmed != true) return;
 
         // Reset completed days and streak
-        await ref.read(completedDaysProviderNot.notifier).resetCompletedDays();
-        await ref.read(streakProvider.notifier).resetStreak();
+        completedDaysNotifier.resetCompletedDays();
+        streakNotifier.resetStreak();
+        studySessionNotifier.resetAllSessions();
 
         ScaffoldMessenger.of(
           context,
