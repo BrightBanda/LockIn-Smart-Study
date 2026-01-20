@@ -108,7 +108,7 @@ class Homepage extends ConsumerWidget {
             ),
             ListTile(
               leading: Icon(Icons.person_2_outlined),
-              title: Text('Profile (coming soon)'),
+              title: Text('Profile'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/profile');

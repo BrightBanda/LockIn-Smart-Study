@@ -35,7 +35,10 @@ class StatsPage extends ConsumerWidget {
                 label: "Schedules",
                 value: stats.totalSchedules.toString(),
               ),
-              //StatTile(label: "Member Since", value: stats.memberSince),
+              StatTile(
+                label: "Member Since",
+                value: stats.memberSince.toString().split(' ')[0],
+              ),
             ],
           );
         },

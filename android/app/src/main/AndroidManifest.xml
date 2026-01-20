@@ -1,8 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name ="android.permssion.FoREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission,WAKE_LOCL"/>
     <application
         android:label="smart_study"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <service
+            android:name="id.flutter.flutter_background_services.BackgroundService"
+            android:foregroundServiceType="mediaPlayback|dataSync"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

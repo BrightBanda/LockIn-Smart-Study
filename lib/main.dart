@@ -6,6 +6,7 @@ import 'package:smart_study/firebase_options.dart';
 import 'package:smart_study/src/data/model/Subject.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/data/model/studySession.dart';
+import 'package:smart_study/src/data/services/background_service_initializer.dart';
 import 'package:smart_study/src/presentation/view/auth_gate.dart';
 import 'package:smart_study/src/presentation/view/login_page.dart';
 import 'package:smart_study/src/presentation/view/profile_page.dart';
@@ -29,6 +30,8 @@ void main() async {
   await Hive.openBox<Subject>('subjects');
   await Hive.openBox<Studysession>('sessions');
   await Hive.openBox<StudySchedule>('schedules');
+
+  await initializeStudyService();
 
   runApp(ProviderScope(child: const MyApp()));
 }
