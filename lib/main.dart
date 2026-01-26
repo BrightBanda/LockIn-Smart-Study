@@ -2,12 +2,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_study/firebase_options.dart';
 import 'package:smart_study/src/data/model/Subject.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/data/model/studySession.dart';
 import 'package:smart_study/src/presentation/view/auth_gate.dart';
 import 'package:smart_study/src/presentation/view/login_page.dart';
+import 'package:smart_study/src/presentation/view/on_bordingscreen.dart';
 import 'package:smart_study/src/presentation/view/profile_page.dart';
 import 'package:smart_study/src/presentation/view/stats_page.dart';
 import 'package:smart_study/src/presentation/view/subjects_page.dart';
@@ -29,12 +31,15 @@ void main() async {
   await Hive.openBox<Subject>('subjects');
   await Hive.openBox<Studysession>('sessions');
   await Hive.openBox<StudySchedule>('schedules');
+  final prefs = await SharedPreferences.getInstance();
+  final hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
 
-  runApp(ProviderScope(child: const MyApp()));
+  runApp(ProviderScope(child: MyApp(hasSeenOnboarding: hasSeenOnboarding)));
 }
 
 class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+  final bool hasSeenOnboarding;
+  const MyApp({super.key, required this.hasSeenOnboarding});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,7 +50,7 @@ class MyApp extends ConsumerWidget {
       darkTheme: ThemeData.dark(),
       themeMode: themeNotifier,
 
-      home: const AuthGate(),
+      home: AuthGate(),
 
       initialRoute: '/',
       routes: {
