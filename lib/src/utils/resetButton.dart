@@ -44,7 +44,7 @@ class ResetButton extends ConsumerWidget {
         // Reset completed days and streak
         completedDaysNotifier.resetCompletedDays();
         streakNotifier.resetStreak();
-        studySessionNotifier.resetAllSessions();
+        //studySessionNotifier.resetAllSessions();
 
         ScaffoldMessenger.of(
           context,
