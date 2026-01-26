@@ -157,7 +157,7 @@ class Homepage extends ConsumerWidget {
               child: todaySchedule.isEmpty
                   ? Center(
                       child: Text(
-                        'No schedules for this day 📭',
+                        'No schedules for this day',
                         style: TextStyle(fontSize: 18, color: Colors.grey),
                       ),
                     )
