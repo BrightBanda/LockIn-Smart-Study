@@ -42,6 +42,9 @@ class SubjectViewModel extends Notifier<List<Subject>> {
 
   Future<void> addSubject(Subject subject) async {
     final userData = ref.read(userDataServiceProvider);
+    if (subject.name == "") {
+      return;
+    }
     await userData.subjectRef().doc(subject.id).set({'name': subject.name});
   }
 
