@@ -50,7 +50,8 @@ class Subjectcard extends ConsumerWidget {
             : isRunning
             ? Theme.of(context).primaryColorLight
             : Theme.of(context).cardTheme.color,
-        elevation: 6,
+        elevation: 2,
+        shadowColor: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(

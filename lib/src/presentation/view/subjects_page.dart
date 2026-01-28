@@ -17,7 +17,7 @@ class SubjectsPage extends ConsumerWidget {
         title: Text(
           "Subjects",
           style: TextStyle(
-            color: Colors.black,
+            color: Theme.of(context).textTheme.bodyMedium?.color,
             fontSize: 30,
             fontWeight: FontWeight.bold,
           ),

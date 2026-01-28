@@ -57,12 +57,18 @@ class SubjectTile extends StatelessWidget {
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardTheme.color,
             border: Border.all(color: const Color.fromARGB(255, 201, 197, 197)),
             borderRadius: BorderRadius.circular(8),
           ),
           child: ListTile(
-            leading: Text(subjectName, style: TextStyle(fontSize: 19)),
+            leading: Text(
+              subjectName,
+              style: TextStyle(
+                fontSize: 19,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
+              ),
+            ),
           ),
         ),
       ),

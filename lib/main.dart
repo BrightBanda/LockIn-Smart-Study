@@ -13,6 +13,7 @@ import 'package:smart_study/src/presentation/view/profile_page.dart';
 import 'package:smart_study/src/presentation/view/stats_page.dart';
 import 'package:smart_study/src/presentation/view/subjects_page.dart';
 import 'package:smart_study/src/presentation/viewmodel/themeManagerViewmodel.dart';
+import 'package:smart_study/src/utils/helpers/app_colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,12 +42,12 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeNotifier = ref.watch(themeNotifierProvider);
+    //final themeNotifier = ref.watch(themeNotifierProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      themeMode: themeNotifier,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.system,
 
       home: const AuthGate(),
 
