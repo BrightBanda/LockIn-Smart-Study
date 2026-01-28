@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:smart_study/src/data/model/Subject.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/presentation/viewmodel/studySessionViewmodel.dart';
+import 'package:smart_study/src/utils/helpers/app_colors.dart';
 import 'package:smart_study/src/utils/myButton.dart';
 
 class Subjectcard extends ConsumerWidget {
@@ -32,6 +33,8 @@ class Subjectcard extends ConsumerWidget {
 
     final progress = 1 - (remainingSeconds / totalSeconds).clamp(0.0, 1.0);
 
+    final appColors = Theme.of(context).extension<AppColors>()!;
+
     return Slidable(
       endActionPane: ActionPane(
         motion: ScrollMotion(),
@@ -49,7 +52,7 @@ class Subjectcard extends ConsumerWidget {
             ? Colors.lightGreenAccent[100]
             : isRunning
             ? Theme.of(context).primaryColorLight
-            : Theme.of(context).cardTheme.color,
+            : appColors.card,
         elevation: 2,
         shadowColor: Colors.white,
         child: Padding(
@@ -63,14 +66,16 @@ class Subjectcard extends ConsumerWidget {
                 children: [
                   Text(
                     subject.name,
-                    style: const TextStyle(
+                    style: TextStyle(
+                      color: appColors.textPrimary,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
                     _formatTime(remainingSeconds),
-                    style: const TextStyle(
+                    style: TextStyle(
+                      color: appColors.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -89,7 +94,10 @@ class Subjectcard extends ConsumerWidget {
               ),
 
               const SizedBox(height: 6),
-              Text("${(progress * 100).round()}%"),
+              Text(
+                "${(progress * 100).round()}%",
+                style: TextStyle(color: appColors.textPrimary),
+              ),
 
               const SizedBox(height: 12),
 
@@ -104,14 +112,20 @@ class Subjectcard extends ConsumerWidget {
                         notifier.startSession(schedule);
                       }
                     },
-                    child: Text(isRunning ? "Stop" : "Start"),
+                    child: Text(
+                      isRunning ? "Stop" : "Start",
+                      style: TextStyle(color: appColors.textPrimary),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Mybutton(
                     onPressed: () {
                       notifier.resetSession(schedule);
                     },
-                    child: const Text("Reset"),
+                    child: Text(
+                      "Reset",
+                      style: TextStyle(color: appColors.textPrimary),
+                    ),
                   ),
                 ],
               ),

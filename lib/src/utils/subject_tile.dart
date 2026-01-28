@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:smart_study/src/utils/helpers/app_colors.dart';
 
 class SubjectTile extends StatelessWidget {
   final String subjectName;
@@ -12,6 +13,7 @@ class SubjectTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appColors = Theme.of(context).extension<AppColors>()!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       child: Slidable(
@@ -64,10 +66,7 @@ class SubjectTile extends StatelessWidget {
           child: ListTile(
             leading: Text(
               subjectName,
-              style: TextStyle(
-                fontSize: 19,
-                color: Theme.of(context).textTheme.bodyMedium?.color,
-              ),
+              style: TextStyle(fontSize: 19, color: appColors.textPrimary),
             ),
           ),
         ),

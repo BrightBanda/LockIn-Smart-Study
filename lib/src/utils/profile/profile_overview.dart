@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_study/src/presentation/viewmodel/statsViewmodel.dart';
+import 'package:smart_study/src/utils/helpers/app_colors.dart';
 import 'package:smart_study/src/utils/profile/overview_details_card.dart';
 
 class ProfileOverview extends ConsumerWidget {
@@ -9,6 +10,7 @@ class ProfileOverview extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final statsAsync = ref.watch(statsViewmodelProvider);
+    final appColors = Theme.of(context).extension<AppColors>()!;
     return statsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (err, stack) => Center(child: Text('Error: $err')),
@@ -16,6 +18,7 @@ class ProfileOverview extends ConsumerWidget {
         return Container(
           height: 350,
           child: Card(
+            color: appColors.card,
             margin: const EdgeInsets.all(16),
             elevation: 4,
             child: Padding(

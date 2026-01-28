@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_study/src/utils/helpers/app_colors.dart';
 import 'package:smart_study/src/utils/resetButton.dart';
 
 class ProfileHead extends StatelessWidget {
@@ -16,10 +17,12 @@ class ProfileHead extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appColors = Theme.of(context).extension<AppColors>()!;
     return Container(
       height: 330,
       width: double.maxFinite,
       child: Card(
+        color: appColors.card,
         margin: const EdgeInsets.all(16),
         elevation: 4,
         child: Column(

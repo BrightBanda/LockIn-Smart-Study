@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_study/src/data/model/Subject.dart';
 import 'package:smart_study/src/presentation/viewmodel/SubjectViewModel.dart';
 import 'package:smart_study/src/utils/add_subject_Dialog.dart';
+import 'package:smart_study/src/utils/helpers/app_colors.dart';
 import 'package:smart_study/src/utils/subject_tile.dart';
 
 class SubjectsPage extends ConsumerWidget {
@@ -12,12 +13,14 @@ class SubjectsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final subjects = ref.watch(subjectViewModelProvider);
     final subjectProv = ref.read(subjectViewModelProvider.notifier);
+    final appColors = Theme.of(context).extension<AppColors>()!;
     return Scaffold(
+      backgroundColor: appColors.card,
       appBar: AppBar(
         title: Text(
           "Subjects",
           style: TextStyle(
-            color: Theme.of(context).textTheme.bodyMedium?.color,
+            color: appColors.textPrimary,
             fontSize: 30,
             fontWeight: FontWeight.bold,
           ),
@@ -26,19 +29,27 @@ class SubjectsPage extends ConsumerWidget {
 
       body: SafeArea(
         child: subjects.isEmpty
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "No subjects added yet",
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
-                  ),
-                  Text(
-                    "       press the '+' button to add a subject",
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
-                  ),
-                ],
+            ? Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "No subjects added yet",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: appColors.textSecondary,
+                      ),
+                    ),
+                    Text(
+                      "       press the '+' button to add a subject",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: appColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               )
             : ListView.builder(
                 itemCount: subjects.length,

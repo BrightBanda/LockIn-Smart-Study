@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_study/src/utils/helpers/app_colors.dart';
 
 class OverviewDetailsCard extends StatelessWidget {
   final IconData icon;
@@ -13,8 +14,11 @@ class OverviewDetailsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appColors = Theme.of(context).extension<AppColors>()!;
     return Card(
-      elevation: 2,
+      elevation: 1,
+      color: appColors.card,
+      shadowColor: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -23,23 +27,18 @@ class OverviewDetailsCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, size: 20),
+                Icon(icon, size: 20, color: appColors.textSecondary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     title,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: TextStyle(color: appColors.textPrimary),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 6),
-            Text(
-              detail,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
+            Text(detail, style: TextStyle(color: appColors.textPrimary)),
           ],
         ),
       ),

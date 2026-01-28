@@ -11,6 +11,7 @@ import 'package:smart_study/src/presentation/viewmodel/themeManagerViewmodel.dar
 import 'package:smart_study/src/utils/SubjectCard.dart';
 import 'package:smart_study/src/utils/addScheduleDialog.dart';
 import 'package:smart_study/src/utils/dayofWeekButton.dart';
+import 'package:smart_study/src/utils/helpers/app_colors.dart';
 
 class Homepage extends ConsumerWidget {
   const Homepage({super.key});
@@ -26,12 +27,16 @@ class Homepage extends ConsumerWidget {
     final sessionProvider = ref.read(studySessionProvider.notifier);
 
     final todaySchedule = schedules.where((s) => s.day == selectedDay).toList();
+
+    final appColors = Theme.of(context).extension<AppColors>()!;
     return Scaffold(
+      backgroundColor: appColors.background,
       appBar: AppBar(
+        foregroundColor: appColors.textPrimary,
         title: Text(
           "LockIN 🔐",
           style: TextStyle(
-            color: Theme.of(context).textTheme.bodyMedium?.color,
+            color: appColors.textPrimary,
             fontSize: 30,
             fontWeight: FontWeight.bold,
           ),
@@ -55,15 +60,10 @@ class Homepage extends ConsumerWidget {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).drawerTheme.backgroundColor,
-              ),
+              decoration: BoxDecoration(color: appColors.card),
               child: Text(
                 'Menu',
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyMedium?.color,
-                  fontSize: 24,
-                ),
+                style: TextStyle(color: appColors.textPrimary, fontSize: 24),
               ),
             ),
             ListTile(
