@@ -10,6 +10,7 @@ import 'package:smart_study/src/presentation/viewmodel/studySessionViewmodel.dar
 import 'package:smart_study/src/presentation/viewmodel/themeManagerViewmodel.dart';
 import 'package:smart_study/src/utils/SubjectCard.dart';
 import 'package:smart_study/src/utils/addScheduleDialog.dart';
+import 'package:smart_study/src/utils/clearDataDialog.dart';
 import 'package:smart_study/src/utils/dayofWeekButton.dart';
 import 'package:smart_study/src/utils/helpers/app_colors.dart';
 
@@ -34,7 +35,7 @@ class Homepage extends ConsumerWidget {
       appBar: AppBar(
         foregroundColor: appColors.textPrimary,
         title: Text(
-          "LockIN 🔐",
+          "LockIN",
           style: TextStyle(
             color: appColors.textPrimary,
             fontSize: 30,
@@ -46,16 +47,12 @@ class Homepage extends ConsumerWidget {
             onPressed: () {
               ref.read(themeNotifierProvider.notifier).toggleTheme();
             },
-            icon: Icon(
-              themeNotifier == ThemeMode.dark
-                  ? Icons.light_mode
-                  : Icons.dark_mode,
-            ),
+            icon: Icon(Icons.music_note_rounded),
           ),
         ],
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
       drawer: Drawer(
+        backgroundColor: appColors.surface,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -68,7 +65,10 @@ class Homepage extends ConsumerWidget {
             ),
             ListTile(
               leading: Icon(Icons.table_chart_outlined),
-              title: Text('Schedule'),
+              title: Text(
+                'Schedule',
+                style: TextStyle(color: appColors.textPrimary),
+              ),
               onTap: () {
                 Navigator.pop(context);
               },
@@ -76,7 +76,10 @@ class Homepage extends ConsumerWidget {
 
             ListTile(
               leading: Icon(Icons.library_books_outlined),
-              title: Text('Subjects'),
+              title: Text(
+                'Subjects',
+                style: TextStyle(color: appColors.textPrimary),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/subjects');
@@ -84,7 +87,10 @@ class Homepage extends ConsumerWidget {
             ),
             ListTile(
               leading: Icon(Icons.style_outlined),
-              title: Text('FlashCards (coming soon)'),
+              title: Text(
+                'FlashCards (coming soon)',
+                style: TextStyle(color: appColors.textPrimary),
+              ),
               onTap: () {
                 Navigator.pop(context);
               },
@@ -92,7 +98,10 @@ class Homepage extends ConsumerWidget {
 
             ListTile(
               leading: Icon(Icons.line_axis_outlined),
-              title: Text('Stats (WIP)'),
+              title: Text(
+                'Stats (WIP)',
+                style: TextStyle(color: appColors.textPrimary),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/statsPage');
@@ -101,14 +110,32 @@ class Homepage extends ConsumerWidget {
 
             ListTile(
               leading: Icon(Icons.history),
-              title: Text('History (coming soon)'),
+              title: Text(
+                'History (coming soon)',
+                style: TextStyle(color: appColors.textPrimary),
+              ),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
+
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text(
+                'Settings (WIP)',
+                style: TextStyle(color: appColors.textPrimary),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/profile');
+              },
+            ),
             ListTile(
               leading: Icon(Icons.person_2_outlined),
-              title: Text('Profile (WIP)'),
+              title: Text(
+                'Profile (WIP)',
+                style: TextStyle(color: appColors.textPrimary),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/profile');
@@ -116,7 +143,10 @@ class Homepage extends ConsumerWidget {
             ),
             ListTile(
               leading: Icon(Icons.logout_outlined),
-              title: Text('Logout'),
+              title: Text(
+                'Logout',
+                style: TextStyle(color: appColors.textPrimary),
+              ),
               onTap: () async {
                 Navigator.pop(context);
                 try {
@@ -128,6 +158,7 @@ class Homepage extends ConsumerWidget {
                 }
               },
             ),
+
             //ClearDataDialog(),
           ],
         ),
@@ -192,6 +223,7 @@ class Homepage extends ConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        shape: CircleBorder(),
         onPressed: () async {
           final newSubject = await showDialog<StudySchedule>(
             context: context,

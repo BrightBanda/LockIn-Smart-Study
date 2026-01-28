@@ -65,6 +65,8 @@ class SubjectsPage extends ConsumerWidget {
       ),
 
       floatingActionButton: FloatingActionButton(
+        shape: CircleBorder(),
+        backgroundColor: appColors.accent,
         onPressed: () async {
           final newSubject = await showDialog<Subject>(
             context: context,
@@ -76,7 +78,7 @@ class SubjectsPage extends ConsumerWidget {
             subjectProv.addSubject(newSubject);
           }
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.add, color: appColors.textPrimary),
       ),
     );
   }

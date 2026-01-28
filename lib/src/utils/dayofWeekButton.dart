@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/presentation/viewmodel/dayCompletionViewmodel.dart';
 import 'package:smart_study/src/presentation/viewmodel/selectedDayViewModel.dart';
+import 'package:smart_study/src/utils/helpers/app_colors.dart';
 
 class Dayofweekbutton extends ConsumerWidget {
   final String day;
@@ -42,16 +43,17 @@ class Dayofweekbutton extends ConsumerWidget {
         .maybeWhen(data: (d) => d, orElse: () => <WeekDay>{});
 
     final isCompleted = completedDays.contains(buttonDay);
+    final appColors = Theme.of(context).extension<AppColors>()!;
 
     Color backgroundColor;
     Color foregroundColor;
 
     if (isSelected && isCompleted) {
-      backgroundColor = Colors.black;
+      backgroundColor = appColors.surface;
       foregroundColor = Colors.greenAccent;
     } else if (isSelected) {
-      backgroundColor = Colors.black;
-      foregroundColor = Colors.white;
+      backgroundColor = appColors.card;
+      foregroundColor = appColors.textPrimary;
     } else if (isCompleted) {
       backgroundColor = Colors.green;
       foregroundColor = Colors.white;
@@ -66,6 +68,7 @@ class Dayofweekbutton extends ConsumerWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           foregroundColor: foregroundColor,
+          elevation: 2,
         ),
         onPressed: () {
           ref.read(selectedDayProvider.notifier).state = buttonDay;

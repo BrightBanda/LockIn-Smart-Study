@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:smart_study/src/data/model/Subject.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/presentation/viewmodel/SubjectViewModel.dart';
+import 'package:smart_study/src/utils/helpers/app_colors.dart';
 
 class AddScheduleDialog extends ConsumerStatefulWidget {
   const AddScheduleDialog({super.key});
@@ -21,8 +22,14 @@ class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
   Widget build(BuildContext context) {
     final subjects = ref.watch(subjectViewModelProvider);
 
+    final appColors = Theme.of(context).extension<AppColors>()!;
+
     return AlertDialog(
-      title: const Text('Add Schedule'),
+      backgroundColor: appColors.card,
+      title: Text(
+        'Add Schedule',
+        style: TextStyle(color: appColors.textPrimary),
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -34,7 +41,10 @@ class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
                     .map(
                       (day) => DropdownMenuItem(
                         value: day,
-                        child: Text(day.name.toUpperCase()),
+                        child: Text(
+                          day.name.toUpperCase(),
+                          style: TextStyle(color: appColors.textPrimary),
+                        ),
                       ),
                     )
                     .toList(),
@@ -48,11 +58,20 @@ class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
               const SizedBox(width: 12),
 
               DropdownButton<String>(
-                hint: const Text('Select Subject'),
+                hint: Text(
+                  'Select Subject',
+                  style: TextStyle(color: appColors.textSecondary),
+                ),
                 value: selectedSubjectId,
                 items: subjects
                     .map(
-                      (s) => DropdownMenuItem(value: s.id, child: Text(s.name)),
+                      (s) => DropdownMenuItem(
+                        value: s.id,
+                        child: Text(
+                          s.name,
+                          style: TextStyle(color: appColors.textSecondary),
+                        ),
+                      ),
                     )
                     .toList(),
                 onChanged: (value) {
@@ -66,7 +85,8 @@ class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
             children: [
               Expanded(
                 child: TextField(
-                  decoration: const InputDecoration(labelText: 'Hours'),
+                  style: TextStyle(color: appColors.textPrimary),
+                  decoration: InputDecoration(labelText: 'Hours'),
                   keyboardType: TextInputType.number,
                   onChanged: (v) => hoursStr = v,
                 ),
@@ -74,6 +94,7 @@ class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
+                  style: TextStyle(color: appColors.textPrimary),
                   decoration: const InputDecoration(labelText: 'Minutes'),
                   keyboardType: TextInputType.number,
                   onChanged: (v) => minutesStr = v,
