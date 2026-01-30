@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
@@ -14,6 +15,12 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
   Map<String, Studysession> build() {
     ref.keepAlive();
 
+    FlutterBackgroundService().on('tick').listen((event) {
+      final seconds = event?['remainingSeconds'];
+      if (seconds == null) {
+        return;
+      }
+    });
     final auth = ref.watch(authStateProvider);
 
     auth.whenData((user) {
@@ -56,12 +63,17 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
   }
 
   Future<void> startSession(StudySchedule schedule) async {
+    await FlutterBackgroundService().startService();
+
+    FlutterBackgroundService().invoke('start', {
+      'seconds': schedule.minutes * 60,
+    });
+
     final userData = ref.read(userDataServiceProvider);
     final id = schedule.id;
 
     final current = state[id];
 
-    // 🟢 CASE 1: session does NOT exist yet → create it
     if (current == null) {
       final newSession = Studysession(
         remainingSeconds: schedule.minutes * 60,
@@ -79,10 +91,8 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
       return;
     }
 
-    // 🟡 CASE 2: already running → do nothing
     if (current.isRunning) return;
 
-    // 🔵 CASE 3: paused → resume
     if (current.remainingSeconds <= 0) return;
 
     state = {...state, id: current.copyWith(isRunning: true)};
@@ -92,6 +102,7 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
   }
 
   Future<void> stopSession(String id) async {
+    FlutterBackgroundService().invoke('pause');
     final userData = ref.read(userDataServiceProvider);
 
     _timers[id]?.cancel();
