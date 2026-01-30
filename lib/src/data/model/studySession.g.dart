@@ -19,17 +19,20 @@ class StudysessionAdapter extends TypeAdapter<Studysession> {
     return Studysession(
       remainingSeconds: fields[0] as int,
       isRunning: fields[1] as bool,
+      lastUpdatedMillis: fields[2] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Studysession obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.remainingSeconds)
       ..writeByte(1)
-      ..write(obj.isRunning);
+      ..write(obj.isRunning)
+      ..writeByte(2)
+      ..write(obj.lastUpdatedMillis);
   }
 
   @override

@@ -1,24 +1,19 @@
 import 'dart:async';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_study/src/data/model/studySchedule.dart';
 import 'package:smart_study/src/data/model/studySession.dart';
 import 'package:smart_study/src/presentation/viewmodel/auth_provide.dart';
-import 'package:smart_study/src/presentation/viewmodel/studyScheduleViewModel.dart';
 
 class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
   final Map<String, Timer> _timers = {};
-  StreamSubscription? _subscription;
 
   @override
   Map<String, Studysession> build() {
     ref.keepAlive();
 
     final auth = ref.watch(authStateProvider);
-
     auth.whenData((user) {
-      _subscription?.cancel();
       _clearTimers();
 
       if (user == null) {
@@ -26,157 +21,178 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
         return;
       }
 
-      _startListening();
+      _restoreFromHive();
     });
 
-    ref.onDispose(() {
-      _subscription?.cancel();
-      _clearTimers();
-    });
-
+    ref.onDispose(_clearTimers);
     return {};
   }
 
-  void _startListening() {
-    _subscription?.cancel();
+  // ----------------------------------
+  // Restore sessions after app restart
+  // ----------------------------------
+  void _restoreFromHive() {
+    final box = Hive.box<Studysession>('sessions');
+    final now = DateTime.now().millisecondsSinceEpoch;
 
-    final userData = ref.read(userDataServiceProvider);
+    final restored = <String, Studysession>{};
 
-    _subscription = userData.sessionRef().snapshots().listen((snapshot) {
-      final map = <String, Studysession>{};
+    for (final key in box.keys) {
+      final session = box.get(key);
+      if (session == null) continue;
 
-      for (final doc in snapshot.docs) {
-        map[doc.id] = Studysession(
-          remainingSeconds: doc['remainingSeconds'],
-          isRunning: doc['isRunning'],
-        );
+      if (!session.isRunning) {
+        restored[key] = session;
+        continue;
       }
 
-      state = map;
-    });
-  }
+      final elapsed = ((now - session.lastUpdatedMillis) / 1000).floor();
 
-  Future<void> startSession(StudySchedule schedule) async {
-    final userData = ref.read(userDataServiceProvider);
-    final id = schedule.id;
+      final remaining = session.remainingSeconds - elapsed;
 
-    final current = state[id];
+      final updated = remaining <= 0
+          ? session.copyWith(
+              remainingSeconds: 0,
+              isRunning: false,
+              lastUpdatedMillis: now,
+            )
+          : session.copyWith(
+              remainingSeconds: remaining,
+              isRunning: true,
+              lastUpdatedMillis: now,
+            );
 
-    if (current == null) {
-      final newSession = Studysession(
-        remainingSeconds: schedule.minutes * 60,
-        isRunning: true,
-      );
+      box.put(key, updated);
+      restored[key] = updated;
 
-      state = {...state, id: newSession};
-
-      await userData.sessionRef().doc(id).set({
-        'remainingSeconds': newSession.remainingSeconds,
-        'isRunning': true,
-      });
-
-      _startTimer(id);
-      return;
+      if (updated.isRunning) {
+        _startTimer(key);
+      }
     }
 
-    if (current.isRunning) return;
-
-    if (current.remainingSeconds <= 0) return;
-
-    state = {...state, id: current.copyWith(isRunning: true)};
-    await userData.sessionRef().doc(id).update({'isRunning': true});
-
-    _startTimer(id);
+    state = restored;
   }
 
-  Future<void> stopSession(String id) async {
-    final userData = ref.read(userDataServiceProvider);
+  // ------------------
+  // Start session
+  // ------------------
+  Future<void> startSession(StudySchedule schedule) async {
+    final box = Hive.box<Studysession>('sessions');
+    final now = DateTime.now().millisecondsSinceEpoch;
 
+    final session = Studysession(
+      remainingSeconds: schedule.minutes * 60,
+      isRunning: true,
+      lastUpdatedMillis: now,
+    );
+
+    await box.put(schedule.id, session);
+    state = {...state, schedule.id: session};
+
+    _startTimer(schedule.id);
+  }
+
+  // ------------------
+  // Stop session
+  // ------------------
+  Future<void> stopSession(String id) async {
     _timers[id]?.cancel();
     _timers.remove(id);
 
-    final current = state[id];
-    if (current != null) {
-      state = {...state, id: current.copyWith(isRunning: false)};
-    }
+    final box = Hive.box<Studysession>('sessions');
+    final session = box.get(id);
+    if (session == null) return;
 
-    await userData.sessionRef().doc(id).update({'isRunning': false});
+    final updated = session.copyWith(
+      isRunning: false,
+      lastUpdatedMillis: DateTime.now().millisecondsSinceEpoch,
+    );
+
+    await box.put(id, updated);
+    state = {...state, id: updated};
   }
 
-  void _clearTimers() {
-    for (final timer in _timers.values) {
-      timer.cancel();
-    }
-    _timers.clear();
+  // ------------------
+  // Reset session
+  // ------------------
+  Future<void> resetSession(StudySchedule schedule) async {
+    _timers[schedule.id]?.cancel();
+    _timers.remove(schedule.id);
+
+    final box = Hive.box<Studysession>('sessions');
+
+    final reset = Studysession(
+      remainingSeconds: schedule.minutes * 60,
+      isRunning: false,
+      lastUpdatedMillis: DateTime.now().millisecondsSinceEpoch,
+    );
+
+    await box.put(schedule.id, reset);
+    state = {...state, schedule.id: reset};
   }
 
+  // ------------------
+  // Internal timer
+  // ------------------
   void _startTimer(String id) {
     _timers[id]?.cancel();
 
     _timers[id] = Timer.periodic(const Duration(seconds: 1), (_) async {
-      final current = state[id];
-      if (current == null || !current.isRunning) return;
+      final box = Hive.box<Studysession>('sessions');
+      final session = box.get(id);
+      if (session == null || !session.isRunning) return;
 
-      final next = current.remainingSeconds - 1;
+      final updated = session.copyWith(
+        remainingSeconds: session.remainingSeconds - 1,
+        lastUpdatedMillis: DateTime.now().millisecondsSinceEpoch,
+      );
 
-      if (next <= 0) {
+      if (updated.remainingSeconds <= 0) {
         _timers[id]?.cancel();
+        _timers.remove(id);
 
-        state = {
-          ...state,
-          id: current.copyWith(remainingSeconds: 0, isRunning: false),
-        };
+        final finished = updated.copyWith(
+          remainingSeconds: 0,
+          isRunning: false,
+        );
 
-        final userData = ref.read(userDataServiceProvider);
-        await userData.sessionRef().doc(id).update({
-          'remainingSeconds': 0,
-          'isRunning': false,
-        });
-
-        ref.read(studyScheduleProvider.notifier).markCompleted(id);
+        await box.put(id, finished);
+        state = {...state, id: finished};
         return;
       }
 
-      state = {...state, id: current.copyWith(remainingSeconds: next)};
-
-      final userData = ref.read(userDataServiceProvider);
-      await userData.sessionRef().doc(id).update({'remainingSeconds': next});
-    });
-  }
-
-  Future<void> resetSession(StudySchedule schedule) async {
-    final userData = ref.read(userDataServiceProvider);
-
-    await userData.sessionRef().doc(schedule.id).set({
-      'remainingSeconds': schedule.minutes * 60,
-      'isRunning': false,
-    });
-
-    await userData.studyScheduleRef().doc(schedule.id).update({
-      'isCompleted': false,
+      await box.put(id, updated);
+      state = {...state, id: updated};
     });
   }
 
   Future<void> resetAllSessions() async {
-    final userData = ref.read(userDataServiceProvider);
-
     _clearTimers();
 
-    final scheduleSnapShot = await userData.studyScheduleRef().get();
-    for (final doc in scheduleSnapShot.docs) {
-      {
-        final schedule = StudySchedule.fromMap(doc.data(), doc.id);
+    final sessionBox = Hive.box<Studysession>('sessions');
+    final updatedState = <String, Studysession>{};
 
-        await userData.sessionRef().doc(schedule.id).set({
-          'remainingSeconds': schedule.minutes * 60,
-          'isRunning': false,
-        });
-        await userData.studyScheduleRef().doc(schedule.id).update({
-          'isCompleted': false,
-        });
-      }
-      state = {};
+    for (final key in sessionBox.keys) {
+      final session = sessionBox.get(key);
+      if (session == null) continue;
+
+      final resetSession = session.copyWith(
+        remainingSeconds: session.remainingSeconds,
+        isRunning: false,
+      );
+
+      await sessionBox.put(key, resetSession);
+      updatedState[key as String] = resetSession;
     }
+
+    state = updatedState;
+  }
+
+  void _clearTimers() {
+    for (final t in _timers.values) {
+      t.cancel();
+    }
+    _timers.clear();
   }
 }
 
