@@ -23,19 +23,34 @@ void studyServiceStart(ServiceInstance service) async {
     },
   );
 
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'study_channel',
+    'study session',
+    description: 'study timer is running in the background',
+    importance: Importance.high,
+  );
+
+  await notification
+      .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin
+      >()
+      ?.createNotificationChannel(channel);
+
   void showNotification() async {
     await notification.show(
       999,
       'Study Session',
       'Remaining: ${remainingSeconds ~/ 60} min ${remainingSeconds % 60}s',
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
           'study_channel',
           'Study Session',
+          channelDescription: 'Study timer running',
           ongoing: true,
           importance: Importance.high,
           priority: Priority.high,
-          actions: [
+          icon: '@mipmap/ic_launcher',
+          actions: const [
             AndroidNotificationAction('pause', 'Pause'),
             AndroidNotificationAction('reset', 'Reset'),
           ],
@@ -45,6 +60,7 @@ void studyServiceStart(ServiceInstance service) async {
   }
 
   service.on('start').listen((event) {
+    showNotification();
     remainingSeconds = event?['seconds'] ?? 0;
     isRunning = true;
 
