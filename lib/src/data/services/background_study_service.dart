@@ -23,10 +23,11 @@ void studyServiceStart(ServiceInstance service) async {
     },
   );
 
+  // ✅ CREATE CHANNEL
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'study_channel',
-    'study session',
-    description: 'study timer is running in the background',
+    'Study Session',
+    description: 'Study timer running in the background',
     importance: Importance.high,
   );
 
@@ -36,6 +37,25 @@ void studyServiceStart(ServiceInstance service) async {
       >()
       ?.createNotificationChannel(channel);
 
+  // 🔴 VERY IMPORTANT: SHOW NOTIFICATION IMMEDIATELY
+  await notification.show(
+    999,
+    'Study Session',
+    'Preparing session…',
+    const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'study_channel',
+        'Study Session',
+        channelDescription: 'Study timer running',
+        ongoing: true,
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+      ),
+    ),
+  );
+
+  // ✅ helper to update notification later
   void showNotification() async {
     await notification.show(
       999,
@@ -59,10 +79,12 @@ void studyServiceStart(ServiceInstance service) async {
     );
   }
 
+  // ▶️ START
   service.on('start').listen((event) {
-    showNotification();
     remainingSeconds = event?['seconds'] ?? 0;
     isRunning = true;
+
+    showNotification();
 
     timer?.cancel();
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -80,10 +102,12 @@ void studyServiceStart(ServiceInstance service) async {
     });
   });
 
+  // ⏸ PAUSE
   service.on('pause').listen((_) {
     isRunning = false;
   });
 
+  // 🔁 RESET
   service.on('reset').listen((_) {
     timer?.cancel();
     isRunning = false;

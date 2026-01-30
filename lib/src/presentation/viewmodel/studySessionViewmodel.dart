@@ -15,12 +15,6 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
   Map<String, Studysession> build() {
     ref.keepAlive();
 
-    FlutterBackgroundService().on('tick').listen((event) {
-      final seconds = event?['remainingSeconds'];
-      if (seconds == null) {
-        return;
-      }
-    });
     final auth = ref.watch(authStateProvider);
 
     auth.whenData((user) {
@@ -44,7 +38,7 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
   }
 
   void _startListening() {
-    _subscription?.cancel(); // ✅ ADD THIS
+    _subscription?.cancel();
 
     final userData = ref.read(userDataServiceProvider);
 
@@ -63,12 +57,6 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
   }
 
   Future<void> startSession(StudySchedule schedule) async {
-    await FlutterBackgroundService().startService();
-
-    FlutterBackgroundService().invoke('start', {
-      'seconds': schedule.minutes * 60,
-    });
-
     final userData = ref.read(userDataServiceProvider);
     final id = schedule.id;
 
@@ -102,7 +90,6 @@ class StudySessionNotifier extends Notifier<Map<String, Studysession>> {
   }
 
   Future<void> stopSession(String id) async {
-    FlutterBackgroundService().invoke('pause');
     final userData = ref.read(userDataServiceProvider);
 
     _timers[id]?.cancel();
