@@ -25,7 +25,7 @@ class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
     final appColors = Theme.of(context).extension<AppColors>()!;
 
     return AlertDialog(
-      backgroundColor: appColors.card,
+      backgroundColor: appColors.surface,
       title: Text(
         'Add Schedule',
         style: TextStyle(color: appColors.textPrimary),
@@ -36,6 +36,10 @@ class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
           Row(
             children: [
               DropdownButton<WeekDay>(
+                hint: Text(
+                  "DAY",
+                  style: TextStyle(color: appColors.textPrimary),
+                ),
                 value: selectedDay,
                 items: WeekDay.values
                     .map(
@@ -43,7 +47,7 @@ class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
                         value: day,
                         child: Text(
                           day.name.toUpperCase(),
-                          style: TextStyle(color: appColors.textPrimary),
+                          style: TextStyle(color: Colors.black),
                         ),
                       ),
                     )
@@ -69,7 +73,7 @@ class _AddScheduleDialogState extends ConsumerState<AddScheduleDialog> {
                         value: s.id,
                         child: Text(
                           s.name,
-                          style: TextStyle(color: appColors.textSecondary),
+                          style: TextStyle(color: Colors.black),
                         ),
                       ),
                     )

@@ -10,14 +10,7 @@ class Studysession {
   @HiveField(1)
   final bool isRunning;
 
-  @HiveField(2)
-  final int lastUpdatedMillis;
-
-  const Studysession({
-    required this.remainingSeconds,
-    required this.isRunning,
-    required this.lastUpdatedMillis,
-  });
+  const Studysession({required this.remainingSeconds, required this.isRunning});
 
   Studysession copyWith({
     int? remainingSeconds,
@@ -27,19 +20,16 @@ class Studysession {
     return Studysession(
       remainingSeconds: remainingSeconds ?? this.remainingSeconds,
       isRunning: isRunning ?? this.isRunning,
-      lastUpdatedMillis: lastUpdatedMillis ?? this.lastUpdatedMillis,
     );
   }
 
   Map<String, dynamic> toMap() => {
     'remainingSeconds': remainingSeconds,
     'isRunning': isRunning,
-    'lastUpdatedMillis': lastUpdatedMillis,
   };
 
   factory Studysession.fromMap(Map<String, dynamic> map) => Studysession(
     remainingSeconds: map['remainingSeconds'],
     isRunning: map['isRunning'],
-    lastUpdatedMillis: map['lastUpdatedMillis'],
   );
 }
