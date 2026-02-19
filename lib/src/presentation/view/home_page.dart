@@ -42,14 +42,6 @@ class Homepage extends ConsumerWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              ref.read(themeNotifierProvider.notifier).toggleTheme();
-            },
-            icon: Icon(Icons.music_note_rounded),
-          ),
-        ],
       ),
       drawer: Drawer(
         backgroundColor: appColors.surface,
@@ -85,17 +77,6 @@ class Homepage extends ConsumerWidget {
                 Navigator.pushNamed(context, '/subjects');
               },
             ),
-            ListTile(
-              leading: Icon(Icons.style_outlined),
-              title: Text(
-                'FlashCards (coming soon)',
-                style: TextStyle(color: appColors.textPrimary),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-
             ListTile(
               leading: Icon(Icons.line_axis_outlined),
               title: Text(

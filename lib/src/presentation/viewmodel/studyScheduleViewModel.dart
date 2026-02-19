@@ -90,12 +90,31 @@ class StudyScheduleViewModel extends Notifier<List<StudySchedule>> {
     final dayCompleted = areAllSchedulesCompletedForDay(day);
 
     if (dayCompleted) {
+      final docId = dayCompletionId(day);
+      final weekId = currentWeekId();
+
       await userData.dayRef().doc(dayCompletionId(day)).set({
         'day': day.index,
         'isCompleted': true,
         'weekId': currentWeekId(),
         'completedAt': DateTime.now(),
       });
+      final savedDoc = await userData.dayRef().doc(docId).get();
+      if (savedDoc.exists) {
+        print('✅ Document saved successfully: ${savedDoc.data()}');
+      } else {
+        print('❌ Document was NOT saved!');
+      }
+
+      // 🔍 Check all documents for current week
+      final weekDocs = await userData
+          .dayRef()
+          .where('weekId', isEqualTo: weekId)
+          .get();
+      print('📊 Documents for week $weekId: ${weekDocs.docs.length}');
+      for (final doc in weekDocs.docs) {
+        print('   - ${doc.id}: ${doc.data()}');
+      }
     }
 
     final allCompleted = state.isNotEmpty && state.every((s) => s.isCompleted);
