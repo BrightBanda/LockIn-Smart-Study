@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_study/src/presentation/view/login_page.dart';
+import 'package:smart_study/src/presentation/view/onboarding_screen.dart';
 import 'package:smart_study/src/presentation/viewmodel/auth_provide.dart';
 import 'home_page.dart';
 
@@ -16,7 +17,7 @@ class AuthGate extends ConsumerWidget {
         if (user == null) {
           return const LoginPage();
         }
-        return const Homepage();
+        return OnboardingScreen();
       },
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
