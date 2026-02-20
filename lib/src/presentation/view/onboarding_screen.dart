@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_study/src/data/model/onboardingSlide.dart';
 import 'package:smart_study/src/presentation/view/home_page.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -13,32 +14,38 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   // List of onboarding slides
   final List<OnboardingSlide> slides = [
     OnboardingSlide(
-      title: 'Welcome to TaskMaster',
-      description: 'Your ultimate task management solution',
-      image: Icons.rocket_launch,
-      color: Colors.blue,
-      backgroundColor: Color(0xFF6B8DD6),
+      title: 'Welcome to LockIN',
+      description:
+          'A focused study system built to help you stay consistent and organized.',
+      image: Icons.lock,
+      color: Colors.white,
+      backgroundColor: Color(0xFF1E1E2E),
     ),
+
     OnboardingSlide(
-      title: 'Organize Your Tasks',
-      description: 'Create, manage, and organize your daily tasks efficiently',
-      image: Icons.task_alt,
-      color: Colors.orange,
-      backgroundColor: Color(0xFFFF8C42),
+      title: 'Create Your Subjects',
+      description: 'Add custom subjects and organize everything your way.',
+      image: Icons.menu_book,
+      color: Colors.white,
+      backgroundColor: Color(0xFF2D2D44),
     ),
+
     OnboardingSlide(
-      title: 'Set Reminders',
-      description: 'Never miss important deadlines with smart reminders',
-      image: Icons.notifications_active,
-      color: Colors.green,
-      backgroundColor: Color(0xFF4CAF50),
+      title: 'Plan Schedules & Sessions',
+      description:
+          'Set study schedules and start focused sessions for each subject.',
+      image: Icons.schedule,
+      color: Colors.white,
+      backgroundColor: Color(0xFF3A3A5E),
     ),
+
     OnboardingSlide(
-      title: 'Track Progress',
-      description: 'Monitor your productivity with detailed analytics',
+      title: 'Track Streaks & Progress',
+      description:
+          'Stay consistent with streaks and monitor your performance with detailed stats.',
       image: Icons.analytics,
-      color: Colors.purple,
-      backgroundColor: Color(0xFF9C27B0),
+      color: Colors.white,
+      backgroundColor: Color(0xFF4B4B73),
     ),
   ];
 
@@ -197,18 +204,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _navigateToHome() {
-    // Navigate to your home screen
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => Homepage()),
     );
 
-    // You can also save that onboarding is completed
-    // SharedPreferences or similar
+    // i well add is onboard completed here later,
   }
 }
 
-// Individual slide widget
 class OnboardingSlideWidget extends StatelessWidget {
   final OnboardingSlide slide;
   final bool isLastPage;
@@ -321,7 +325,7 @@ class OnboardingSlideWidget extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            'Ready to boost your productivity?',
+                            'Ready to LockIN?',
                             style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
                         ),
@@ -335,21 +339,4 @@ class OnboardingSlideWidget extends StatelessWidget {
       ),
     );
   }
-}
-
-// Model class for onboarding slides
-class OnboardingSlide {
-  final String title;
-  final String description;
-  final IconData image;
-  final Color color;
-  final Color backgroundColor;
-
-  OnboardingSlide({
-    required this.title,
-    required this.description,
-    required this.image,
-    required this.color,
-    required this.backgroundColor,
-  });
 }
